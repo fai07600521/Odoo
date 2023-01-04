@@ -1,0 +1,42 @@
+h1,h2,h3,h4,h5,h6,p,span,a,input,label,button,a,table,tr,td,th{
+	font-family: 'Kanit', sans-serif !important;
+}
+#mainleft{
+	height: 100vh;
+	background-color: #EEE;
+}
+#mainprice{
+	height: 50vh;
+	overflow-y: scroll;
+	background-color: #FFF;
+}
+#mainorder{
+	padding: 20px;
+}
+#sumprice{
+	height: 10vh;
+	background-color: #CCC;
+}
+#barcodein{
+	background-color: #FFF;
+	padding: 0 !important
+}
+#submitorder{
+	height: 20vh;
+}
+#mainbrandbar{
+	padding: 0 !important;
+}
+#mainbrandbar ul li,#mainbrandbar ul{
+	text-align: center;
+}
+.tab-pane{
+	padding: 20px;
+}
+#mainproduct{
+	height: 100vh;
+	overflow-y: scroll;
+}
+#sumpricetxt{
+	font-size: 4em;
+}
