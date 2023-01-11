@@ -18,14 +18,13 @@ services:
 
   db:
     image: bitnami/mysql:5.7
+    restart: always
     container_name: bitnami-mysql
     environment:
       - MYSQL_DATABASE=odoo_database
       - MYSQL_USER=suttipong
       - MYSQL_PASSWORD=gYRdC0qxua6t01hJFZ8Ok983s
       - MYSQL_ROOT_PASSWORD=gYRdC0qxua6t01hJFZ8Ok983s
-    volumes:
-      - ./docker-compose/mysql:/bitnami/mysql/data
     networks:
       - odoo
     ports:
