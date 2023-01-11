@@ -3,8 +3,8 @@ services:
   app:
     build:
       args:
-        user: suttipong
-        uid: 501
+        user: root
+        uid: 0
       context: ./
       dockerfile: Dockerfile
     image: odoo
