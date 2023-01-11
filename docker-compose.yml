@@ -1,0 +1,62 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: suttipong
+        uid: 501
+      context: ./
+      dockerfile: Dockerfile
+    image: odoo
+    container_name: odoo-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - odoo
+
+  db:
+    image: bitnami/mysql:5.7
+    restart: always
+    container_name: bitnami-mysql
+    environment:
+      - MYSQL_DATABASE=odoo_database
+      - MYSQL_USER=suttipong
+      - MYSQL_PASSWORD=gYRdC0qxua6t01hJFZ8Ok983s
+      - MYSQL_ROOT_PASSWORD=gYRdC0qxua6t01hJFZ8Ok983s
+    volumes:
+      - ./docker-compose/mysql:/bitnami/mysql/data
+    networks:
+      - odoo
+    ports:
+      - '3306:3306'
+
+  phpmyadmin:
+    container_name: odoo-phpmyadmin
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    networks:
+      - odoo
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=suttipong
+      - PMA_PASSWORD=gYRdC0qxua6t01hJFZ8Ok983s
+      
+  nginx:
+    image: nginx:alpine
+    container_name: odoo-nginx
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - odoo
+
+networks:
+  odoo:
+    driver: bridge

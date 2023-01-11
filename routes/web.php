@@ -11,7 +11,8 @@
 |
 */
 
-
+Route::post('/test','PhotoController@create');
+Route::get('/test','PhotoController@index');
 
 Auth::routes();
 
@@ -23,13 +24,6 @@ Route::get('/logout',function(){
 	Auth::logout();
 	return redirect('/login');
 });
-Route::post('/register',function(){
-	return redirect('/login');
-});
-Route::post('/register',function(){
-	return redirect('/login');
-});
-
 //RouteFix
 Route::get('/home',function(){
 	return redirect('/');
