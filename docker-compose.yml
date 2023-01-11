@@ -41,7 +41,7 @@ services:
       - odoo
     environment:
       - PMA_HOST=db
-      - PMA_USER=${DB_DATABASE}
+      - PMA_USER=${DB_USERNAME}
       - PMA_PASSWORD=${DB_PASSWORD}
       
   nginx:
