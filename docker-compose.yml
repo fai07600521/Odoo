@@ -30,7 +30,7 @@ services:
     networks:
       - odoo
     ports:
-      - '3306:3306'
+      - '3307:3306'
 
   phpmyadmin:
     container_name: odoo-phpmyadmin
