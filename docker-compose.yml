@@ -7,26 +7,26 @@ services:
         uid: 1000
       context: ./
       dockerfile: Dockerfile
-    image: travellist
-    container_name: travellist-app
+    image: odoo
+    container_name: odoo-app
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
       - ./:/var/www
     networks:
-      - travellist
+      - odoo
 
   db:
     image: bitnami/mysql:5.7
     restart: always
     container_name: bitnami-mysql
     environment:
-      - MYSQL_DATABASE=acts
-      - MYSQL_USER=suttipong
-      - MYSQL_PASSWORD=gYRdC0qxua6t01hJFZ8Ok983s
-      - MYSQL_ROOT_PASSWORD=gYRdC0qxua6t01hJFZ8Ok983s
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     networks:
-      - travellist
+      - odoo
     ports:
       - '3306:3306'
 
@@ -36,7 +36,7 @@ services:
     ports:
       - 8080:80
     networks:
-      - travellist
+      - odoo
     environment:
       - PMA_HOST=db
       - PMA_USER=suttipong
@@ -44,7 +44,7 @@ services:
       
   nginx:
     image: nginx:alpine
-    container_name: travellist-nginx
+    container_name: odoo-nginx
     restart: unless-stopped
     ports:
       - 8000:80
@@ -52,8 +52,8 @@ services:
       - ./:/var/www
       - ./docker-compose/nginx:/etc/nginx/conf.d/
     networks:
-      - travellist
+      - odoo
 
 networks:
-  travellist:
+  odoo:
     driver: bridge
