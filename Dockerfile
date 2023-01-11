@@ -27,9 +27,8 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # Install extensions
 # php:7.2-fpm
 # RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl 
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 # RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
-RUN docker-php-ext-install gd
 
 # patch and fix the php bug  (reference: https://github.com/docker-library/php/issues/865#issuecomment-511163936)
 
