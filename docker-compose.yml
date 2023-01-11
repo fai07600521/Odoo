@@ -18,7 +18,6 @@ services:
 
   db:
     image: bitnami/mysql:5.7
-    restart: always
     container_name: bitnami-mysql
     environment:
       - MYSQL_DATABASE=odoo_database
@@ -30,7 +29,7 @@ services:
     networks:
       - odoo
     ports:
-      - '3307:3306'
+      - '3306:3306'
 
   phpmyadmin:
     container_name: odoo-phpmyadmin
