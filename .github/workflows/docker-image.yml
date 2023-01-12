@@ -1,0 +1,24 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: ["act"]
+  pull_request:
+    branches: ["act"]
+
+env:
+  REGISTRY: ${{ secrets.DOCKER_USER }}
+  IMAGE_NAME: "checkcoupon"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Symfony
+        working-directory: /home/laravel/laravel
+        run: |
+          touch .env
+          echo REACT_APP_BASE_URL=${{ secrets.REACT_APP_BASE_URL }} >> .env
+          cat .env
