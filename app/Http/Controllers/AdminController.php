@@ -1381,8 +1381,13 @@ class AdminController extends Controller
 	public function getPrintSlip(Request $request){
 		$invoice = Invoices::find($request->id);
 		if(isset($invoice)){
+			$invoiceItems = Invoice_item::where("invoice_id", $invoice->id)->get();
+			$sumItem = 0;
+			foreach ($invoiceItems as $item){ 
+				$sumItem += $item->quantity;
+			}
 			$promotions = $invoice->getPromotion;
-			return view('admin.pos.slip',compact('invoice','promotions'));
+			return view('admin.pos.slip',compact('invoice','promotions', 'sumItem'));
 		}else{
 			$message = array(
 				"msgcode" => "500",

@@ -135,8 +135,9 @@
 					<hr style="width: 100%; border:solid #ccc 1px; margin-top: -1px;">
 				</td>
 			</tr>
-						<tr>
-				<td colspan="3" style="text-align: right; font-size: 12px;">รวมมูลค่าสินค้า</td>
+			<tr>
+				<td style="font-size: 12px;">จำนวนรวม {!!$sumItem!!}</td>
+				<td colspan="2" style="text-align: right; font-size: 12px;">รวมมูลค่าสินค้า</td>
 				<td style="text-align: right;font-size: 12px;">{{number_format($count/1.07,2)}} </td>
 			</tr>
 			<tr>
