@@ -1437,7 +1437,7 @@ class AdminController extends Controller
 				foreach($invoice->getItem as $item){
 					$tmpprodid = "id".$item->product_id."|". $item->suminput/$item->quantity;
 					try{
-						$reportsum[$tmpprodid] += $item->price;
+						$reportsum[$tmpprodid] += $item->price*$item->quantity;
 						$reportquantity[$tmpprodid] += $item->quantity;
 						$reportsuminput[$tmpprodid] += $item->suminput;
 						$reportinvoiceid[$tmpprodid] .= ",".$item->id;
@@ -1457,6 +1457,7 @@ class AdminController extends Controller
 				}
 
 			}
+			// dd('Here');
 			$payments = DB::select(DB::raw("SELECT i.paymenttype_id as id,pt.name as name, SUM(it.suminput) as sum, i.status ,i.created_at,i.branch_id
 				FROM invoices i JOIN invoice_item it ON i.id = it.invoice_id JOIN paymenttypes pt ON pt.id = i.paymenttype_id
 				GROUP BY i.status,i.created_at,i.paymenttype_id

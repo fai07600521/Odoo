@@ -109,7 +109,7 @@
 								</td>
 								<td class="text-center">{{$sellquantity}}</td>
 								<td class="text-center"> {{number_format($report,2)}}</td>
-								<td class="text-center"> {{number_format($discount,2)}} ({{number_format($discountrate)}}%)</td>
+								<td class="text-center"> {{number_format($discount,2)}} ({{number_format($discountrate,2)}}%)</td>
 								<td class="text-center">{{number_format($sellinput,2)}}</td>
 								<td class="text-center">{{number_format($sellinput/1.07,2)}}</td>
 								<td class="text-center">{{number_format($vat,2)}}</td>
