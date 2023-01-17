@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <title> {{$_ENV['APP_NAME']}} | @yield('title')</title>
+    <title> {{ config('app.name') }} | @yield('title')</title>
     <meta name="description" content="GIST - Multibrand Store System">
     <meta name="author" content="Jirapat Hangjaraon">
     <meta property="og:title" content="GIST - Multibrand Store System">
@@ -332,7 +332,7 @@
 <footer id="page-footer" class="opacity-0">
     <div class="content py-20 font-size-xs clearfix"> 
         <div class="float-left">
-            <a class="font-w600" href="https://shop.nobaddays.in.th" target="_blank">{{$_ENV["APP_NAME"]}}</a> &copy; <span class="js-year-copy">2019</span>
+            <a class="font-w600" href="https://shop.nobaddays.in.th" target="_blank">{{ config('app.name') }}</a> &copy; <span class="js-year-copy">2019</span>
         </div>
     </div>
 </footer>
