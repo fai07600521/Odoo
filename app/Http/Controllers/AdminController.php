@@ -1877,7 +1877,9 @@ class AdminController extends Controller
 		]);
 	}
 	public function checkNotiPromotion(Request $request){
-		$promotion_products = Promotion_product::where('product_id','=',$request->product_id)->get();
+		$promotion_products = Promotion_product::where('product_id','=',$request->product_id)
+		->orderby('created_at', 'desc')
+		->get();
 		$productname = "";
 		$product_variant = Product_variant::find($request->product_id);
 		if(isset($product_variant)){
@@ -1903,6 +1905,7 @@ class AdminController extends Controller
 					continue;
 				}
 				$message .= $promotion->description."<br>";
+				break;
 			}
 
 		}
