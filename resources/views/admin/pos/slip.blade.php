@@ -84,7 +84,7 @@
             </tr>
             <tr>
                 <td style="width: 400px; text-align:center;">
-                    @if (app('request')->input('lang') == 'EN')
+                    @if (app('request')->input('lang') == 'EN' && $invoice->getBranch->en_companyname && $invoice->getBranch->en_address)
                         <p>
                             <font style="font-size: 14px; font-weight: bolder;">{{ $invoice->getBranch->en_companyname }}
                             </font><br>
