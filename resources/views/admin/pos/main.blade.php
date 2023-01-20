@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-	<title> {{$_ENV['APP_NAME']}} | POS</title>
+	<title>{{$_ENV['APP_NAME']}} | POS</title>
 	<meta name="description" content="GIST - Multibrand Store System">
 	<meta name="author" content="Jirapat Hangjaraon">
 	<meta property="og:title" content="GIST - Multibrand Store System">
@@ -190,6 +190,17 @@
 									</select>
 								</div>
 							</div>
+
+							<div class="form-group row">
+								<label class="col-12">เลือกภาษาของใบเสร็จ</label>
+								<div class="col-12">
+									<select id="language-slip" class="form-control">
+										<option value="TH">ไทย</option>
+										<option value="EN">English</option>
+									</select>
+								</div>
+							</div>
+
 							<div class="form-group row">
 								<div class="col-6 text-left">
 									<i id="preload" style="display: none;" class="fa fa-2x fa-asterisk fa-spin"></i>
@@ -528,12 +539,14 @@
 							$("#tableorder").html("");
 							$("#tablepromotion").html("");
 							$("#memberselect").val(0);
-							window.open("{{$_ENV['APP_URL']}}/admin/pos/slip/"+msg);
+							
+							window.open("{{$_ENV['APP_URL']}}/admin/pos/slip/"+msg+"?lang="+$("#language-slip").val());
 							Swal.fire({
 								type: 'success',
 								title: 'บันทึกข้อมูลเรียบร้อย',
 								text: 'ระบบบันทึกข้อมูลการขายเรียบร้อยแล้ว'
 							})
+							$("#language-slip").val("TH")
 							$("#checkoutbtn").fadeIn();
 						}else{
 							Swal.fire({
