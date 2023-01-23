@@ -1905,7 +1905,6 @@ class AdminController extends Controller
 					continue;
 				}
 				$message .= $promotion->description."<br>";
-				break;
 			}
 
 		}
