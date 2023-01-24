@@ -1381,8 +1381,13 @@ class AdminController extends Controller
 	public function getPrintSlip(Request $request){
 		$invoice = Invoices::find($request->id);
 		if(isset($invoice)){
+			$invoiceItems = Invoice_item::where("invoice_id", $invoice->id)->get();
+			$sumItem = 0;
+			foreach ($invoiceItems as $item){ 
+				$sumItem += $item->quantity;
+			}
 			$promotions = $invoice->getPromotion;
-			return view('admin.pos.slip',compact('invoice','promotions'));
+			return view('admin.pos.slip',compact('invoice','promotions', 'sumItem'));
 		}else{
 			$message = array(
 				"msgcode" => "500",
@@ -1437,7 +1442,7 @@ class AdminController extends Controller
 				foreach($invoice->getItem as $item){
 					$tmpprodid = "id".$item->product_id."|". $item->suminput/$item->quantity;
 					try{
-						$reportsum[$tmpprodid] += $item->price;
+						$reportsum[$tmpprodid] += $item->price*$item->quantity;
 						$reportquantity[$tmpprodid] += $item->quantity;
 						$reportsuminput[$tmpprodid] += $item->suminput;
 						$reportinvoiceid[$tmpprodid] .= ",".$item->id;
@@ -1457,6 +1462,7 @@ class AdminController extends Controller
 				}
 
 			}
+			// dd('Here');
 			$payments = DB::select(DB::raw("SELECT i.paymenttype_id as id,pt.name as name, SUM(it.suminput) as sum, i.status ,i.created_at,i.branch_id
 				FROM invoices i JOIN invoice_item it ON i.id = it.invoice_id JOIN paymenttypes pt ON pt.id = i.paymenttype_id
 				GROUP BY i.status,i.created_at,i.paymenttype_id
@@ -1871,7 +1877,9 @@ class AdminController extends Controller
 		]);
 	}
 	public function checkNotiPromotion(Request $request){
-		$promotion_products = Promotion_product::where('product_id','=',$request->product_id)->get();
+		$promotion_products = Promotion_product::where('product_id','=',$request->product_id)
+		->orderby('created_at', 'desc')
+		->get();
 		$productname = "";
 		$product_variant = Product_variant::find($request->product_id);
 		if(isset($product_variant)){

@@ -414,24 +414,24 @@ class PromotionController extends Controller
 	}
 
 	public function posCheckPromotion(Request $request){
-		$promotion_products = Promotionauto_product::where('product_id','=',$request->product_id)->get();
+		$promotion_products = Promotionauto_product::where('product_id','=',$request->product_id)
+		->orderby('created_at', 'desc')
+		->get();
 		$productname = "";
 		$product_variant = Product_variant::find($request->product_id);
 		if(isset($product_variant)){
 			$productname = $product_variant->getProduct->name;
 		}
-
 		$message = "";
 		$today = new DateTime();
 		foreach($promotion_products as $product){
 			$promotion = $product->getPromotion;
-
 			$branchcheck = $promotion->getBranch;
 			$tmp =array();
 			foreach($branchcheck as $check){
-				array_push($tmp,$check->branch_id);
+				array_push($tmp, $check->branch_id);
 			}
-			if(in_array($request->branch_id,$tmp)){
+			if(in_array($request->branch_id, $tmp)){
 				$startdate = new DateTime($promotion->startdate);
 				$enddate = new DateTime($promotion->enddate);
 				if($startdate > $today){
@@ -441,6 +441,7 @@ class PromotionController extends Controller
 					continue;
 				}
 				$message .= $promotion->description."<br>";
+				break;
 			}
 
 		}

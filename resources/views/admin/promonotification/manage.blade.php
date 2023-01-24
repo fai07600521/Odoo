@@ -52,13 +52,13 @@
 							<div class="form-group row">
 								<label class="col-12" for="startdate">วันเริ่มต้น</label>
 								<div class="col-lg-12">
-									<input type="text" class="js-datepicker form-control"  name="startdate" data-week-start="1" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" value="{{isset($promotion)? $promotion->startdate : ''}}">
+									<input type="datetime-local" class="form-control"  name="startdate" data-week-start="1" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" value="{{isset($promotion)? $promotion->startdate : ''}}">
 								</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-12" for="enddate">วันสิ้นสุด</label>
 								<div class="col-lg-12">
-									<input type="text" class="js-datepicker form-control" name="enddate" data-week-start="1" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" value="{{isset($promotion)? $promotion->enddate : ''}}" >
+									<input type="datetime-local" class="form-control" name="enddate" data-week-start="1" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" value="{{isset($promotion)? $promotion->enddate : ''}}" >
 								</div>
 							</div>						
 							<div class="form-group row">
