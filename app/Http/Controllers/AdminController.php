@@ -153,13 +153,16 @@ class AdminController extends Controller
 				foreach($invoice->getItem as $item){
 					try{
 					$productdata = Product_variant::find($item->product_id);
-					$report[$productdata->getProduct->user_id] += $item->quantity*$item->price;
-					$discountreport[$productdata->getProduct->user_id] += ($item->quantity*$item->price)-$item->suminput; 
+					if(isset($productdata)){
+						$report[$productdata->getProduct->user_id] += $item->quantity*$item->price;
+						$discountreport[$productdata->getProduct->user_id] += ($item->quantity*$item->price)-$item->suminput; 
+					}
 					}catch(Exception $e){
 						$productdata = Product_variant::find($item->product_id);
-					$report[$productdata->getProduct->user_id] = $item->quantity*$item->price;
-					$discountreport[$productdata->getProduct->user_id] = ($item->quantity*$item->price)-$item->suminput; 
-
+						if(isset($productdata)){
+							$report[$productdata->getProduct->user_id] = $item->quantity*$item->price;
+							$discountreport[$productdata->getProduct->user_id] = ($item->quantity*$item->price)-$item->suminput; 
+						}
 					}
 				}
 			}
