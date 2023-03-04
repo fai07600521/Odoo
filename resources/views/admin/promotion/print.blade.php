@@ -146,8 +146,10 @@ function DateThai($strDate){
 				echo "<div class='col-12' style='padding:15px;'></div>";
 			}
 			$productdata = $product->getProductVariant;
-			$productdata = $productdata->getProduct;
-			$count++;
+			if(isset($productdata)){
+				$productdata = $productdata->getProduct;
+				$count++;
+			}
 		?>
 		<div class="col-4">
 			<div style="background-image: url('/printpromotion.jpg'); background-size: cover; width: 8cm; height:3.98cm; text-align: center; border:1px solid black;">
