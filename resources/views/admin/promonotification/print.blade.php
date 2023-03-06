@@ -228,7 +228,7 @@ text-align: center;
 		$product = $product->getProduct;
 
 	?>
-	<span  style="color:rgb(246,200,32);  margin-bottom: 0; text-shadow: rgb(222 118 52) 3px 1px 0px;">{{$product->name}}</span>
+	<span  style="color:rgb(246,200,32);  margin-bottom: 0; text-shadow: rgb(222 118 52) 3px 1px 0px;">{{$product ? $product->name : ''}}</span>
 	<p id="fit2" style="margin-top: 0; color: rgb(233,158,197); font-size: 1.5em;">{{DateThai($promotion->startdate)}} - {{DateThai($promotion->enddate)}}</p>
 </div>
 </div>
@@ -248,7 +248,7 @@ $count++;
 <td>
 <div class="box-item">
 <div class="top"  style="width: 9cm;position: relative;padding: 1cm;left: 0.2cm;top: 0.7cm;text-align: center;text-overflow: ellipsis;height: 7.5cm;">
-	<span  style="color:rgb(237,32,36);">{{$promotion->description}}</span>
+	<span  style="color:rgb(237,32,36);">{{$promotion ? $promotion->description: ''}}</span>
 		
 </div>
 <div class="bottom" style="width: 7cm; height: 1cm; position: relative; left: 1.2cm; top: 0.2cm; text-align: center; ">
@@ -256,13 +256,15 @@ $count++;
 		$product = $promotion->getProduct;
 		if(isset($product[0])){
 			$product = \App\Http\Controllers\BrandController::getProductData($product[0]->product_id);
-			$product = $product->getProduct;
+			if(isset($product)){
+				$product = $product->getProduct;
+			}
 		}else{
 			continue;
 		}
 		
 	?>
-	<span  style="color:rgb(246,200,32);  margin-bottom: 0; text-shadow: rgb(222 118 52) 3px 1px 0px;">{{$product->name}}</span>
+	<span  style="color:rgb(246,200,32);  margin-bottom: 0; text-shadow: rgb(222 118 52) 3px 1px 0px;">{{$product ? $product->name : ''}}</span>
 	<p id="fit2" style="margin-top: 0; color: rgb(233,158,197); font-size: 1.5em;">{{DateThai($promotion->startdate)}} - {{DateThai($promotion->enddate)}}</p>
 </div>
 </div>
