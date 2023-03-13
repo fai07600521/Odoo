@@ -1672,6 +1672,16 @@ class AdminController extends Controller
 		if(sizeOf($promotions)==0){
 			dd("No promotion to print");
 		}
+		/*  FOR DEV TEST ONLY */
+		// $test = array();
+		// foreach($promotions as $promotion){
+		// 	$product = $promotion->getProduct;
+		// 	$b =  \App\Http\Controllers\BrandController::getProductData($product[0]->product_id);
+		// 	if(!isset($b)){
+		// 		array_push($test, $product[0]->product_id);
+		// 	}
+		// }
+		// return \Response::json($test, 200);
 		return view('admin.promonotification.print',compact('promotions','type'));
 	}
 
