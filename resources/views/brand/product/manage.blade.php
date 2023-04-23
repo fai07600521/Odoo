@@ -137,6 +137,10 @@
 													<div class="col-12">
 														@if(isset($product))
 														<div class="custom-control custom-radio custom-control-inline mb-5">
+															<input class="custom-control-input" type="radio" name="discount_type" id="discount0" value="0" {{$product->discount_type==0?'checked=""':''}} >
+															<label class="custom-control-label" for="discount0">ไม่มีการกำหนดราคา</label>
+														</div>
+														<div class="custom-control custom-radio custom-control-inline mb-5">
 															<input class="custom-control-input" type="radio" name="discount_type" id="discount1" value="1" {{$product->discount_type==1?'checked=""':''}} >
 															<label class="custom-control-label" for="discount1">กำหนดราคา</label>
 														</div>
@@ -145,6 +149,10 @@
 															<label class="custom-control-label" for="discount2">กำหนด %</label>
 														</div>
 														@else
+														<div class="custom-control custom-radio custom-control-inline mb-5">
+															<input class="custom-control-input" type="radio" name="discount_type" id="discount0" value="0" checked="">
+															<label class="custom-control-label" for="discount0">ไม่มีการกำหนดราคา</label>
+														</div>
 														<div class="custom-control custom-radio custom-control-inline mb-5">
 															<input class="custom-control-input" type="radio" name="discount_type" id="discount1" value="1" checked="">
 															<label class="custom-control-label" for="discount1">กำหนดราคา</label>
