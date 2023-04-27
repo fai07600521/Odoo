@@ -85,7 +85,7 @@
 
                <!-- Side Navigation -->
                <div class="content-side content-side-full" style="padding-top: 150px;">
-                @if(Auth::user()->role=="2")
+@if(Auth::user()->role=="2")
                 <h5 class="text-center">ผู้ดูแลระบบ</h5>
                 <ul class="nav-main">
                    <li>
@@ -189,11 +189,11 @@
     <li>
         <a id="dashboardbtn" href="/"><i class="si si-cup"></i><span class="sidebar-mini-hide">ภาพรวมระบบ</span></a>
     </li>
-    <li>
+    <!-- <li>
         <a id="productbtn" href="/products"><i class="si si-social-dropbox"></i><span class="sidebar-mini-hide">การจัดการสินค้า</span></a>
-    </li>
+    </li> -->
 
-    <li class="nav-main-heading"><span class="sidebar-mini-hidden">นำสินค้าเข้าสต๊อก</span></li>
+    <!-- <li class="nav-main-heading"><span class="sidebar-mini-hidden">นำสินค้าเข้าสต๊อก</span></li>
     <li>    
       <li>
         <a id="pocreatebtn" href="/purchase/add"><i class="si si-note"></i>
@@ -206,18 +206,18 @@
             <span class="sidebar-mini-hide">พิมพ์บาร์โค๊ดแบบกำหนดเอง</span>
         </a> 
         
-    </li>
+    </li> -->
     <li class="nav-main-heading"><span class="sidebar-mini-hidden">รายงานการขาย</span></li>
     <li>    
       <li>
         <a id="reportdaybtn" href="/report"><i class="si si-bar-chart"></i>
             <span class="sidebar-mini-hide">สรุปยอดขาย</span>
         </a>        
-        <a id="reportstockbtn" href="/stock"><i class="si si-bar-chart"></i>
+        <!-- <a id="reportstockbtn" href="/stock"><i class="si si-bar-chart"></i>
             <span class="sidebar-mini-hide">รายงานสต๊อกสินค้า</span>
-        </a>
+        </a> -->
     </li>
-    <li class="nav-main-heading animated infinite pulse"><span class="sidebar-mini-hidden">คู่มือการใช้งาน</span></li>
+    <!-- <li class="nav-main-heading animated infinite pulse"><span class="sidebar-mini-hidden">คู่มือการใช้งาน</span></li>
     <li>    
       <li>
         <a id="help1btn" href="/help/1"><i class="si si-book-open"></i>
@@ -229,7 +229,7 @@
         <a id="help3btn" href="/help/3"><i class="si si-book-open"></i>
             <span class="sidebar-mini-hide">การพิมพ์บาร์โค๊ด</span>
         </a>
-    </li>
+    </li> -->
 </ul>
 @endif
 </div>
