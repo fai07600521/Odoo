@@ -27,7 +27,16 @@
 							<div class="row">
 								<label class="col-12">วันที่เริ่มต้น</label>
 								<div class="col-12">
-									<input type="text" class="js-datepicker form-control" name="start_date" data-week-start="1" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" required="" autocomplete="off">
+									<input type="date" class="form-control" 
+									min="2023-04-01"
+									name="start_date" 
+									data-week-start="1" 
+									data-autoclose="true" 
+									data-today-highlight="true" 
+									data-date-format="yyyy-mm-dd" 
+									placeholder="yyyy-mm-dd" 
+									required="" 
+									autocomplete="off">
 								</div>
 							</div>
 						</div>
@@ -35,7 +44,16 @@
 							<div class="row">
 								<label class="col-12">วันที่สิ้นสุด</label>
 								<div class="col-12">
-									<input type="text" class="js-datepicker form-control" name="end_date" data-week-start="1" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" required="" autocomplete="off">
+									<input type="date" class="form-control" 
+									min="2023-04-01"
+									name="end_date" 
+									data-week-start="1" 
+									data-autoclose="true" 
+									data-today-highlight="true" 
+									data-date-format="yyyy-mm-dd" 
+									placeholder="yyyy-mm-dd" 
+									required="" 
+									autocomplete="off">
 								</div>
 							</div>
 						</div>
