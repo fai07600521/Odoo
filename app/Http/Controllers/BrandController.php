@@ -73,6 +73,7 @@ class BrandController extends Controller
 		$invoices = Invoices::with(['getItem' => function ($q) use ($productsArray){
 			$q->whereIn('product_id' , $productsArray);
 		}])
+		->where('status', '=', 1)
 		->whereMonth('created_at', '=', $current->month)
 		->whereYear('created_at', '=', $current->year)
 		->get();
