@@ -41,6 +41,12 @@ class BrandController extends Controller
 			return redirect("/admin");
 		}
 		$products = Products::where("user_id",'=',$user->id)->where("status",'=',"1")->get();
+
+		$productsArray = [];
+		foreach($products as $product){
+			array_push($productsArray, $product->id);
+		}
+		// foreach
 		//Lastest Order
 		$lastest = DB::select(DB::raw("SELECT product_id,quantity,price,created_at 
 			FROM `invoice_item` 
@@ -62,14 +68,36 @@ class BrandController extends Controller
 			$graph[$i]["income"] = 0;
 		}
 		//Income
+		$current = Carbon::now();
+
+		$invoices = Invoices::with(['getItem' => function ($q) use ($productsArray){
+			$q->whereIn('product_id' , $productsArray);
+		}])
+		->whereMonth('created_at', '=', $current->month)
+		->whereYear('created_at', '=', $current->year)
+		->get();
+		$summ = 0;
+		foreach($invoices as $invoice){
+			if(!$invoice->getItem->isEmpty()){
+				foreach($invoice->getItem as $item){
+					$summ += $item->price;
+				}
+			}
+		}
+
+
 		$todayincome = DB::select(DB::raw("SELECT it.product_id as product_id,SUM(it.suminput) as summary ,i.created_at
 			FROM invoice_item it JOIN invoices i ON it.invoice_id = i.id
 			WHERE it.product_id IN (SELECT pv.id FROM products p JOIN product_variant pv ON pv.product_id = p.id WHERE p.user_id = '$user->id') AND i.created_at like CONCAT(CURDATE(),'%') AND i.status = '1'"));
 		$todayincome = $todayincome[0]->summary;
-		$monthincome = DB::select(DB::raw("SELECT it.product_id as product_id,SUM(it.suminput) as summary ,i.created_at
-			FROM invoice_item it JOIN invoices i ON it.invoice_id = i.id
-			WHERE it.product_id IN (SELECT pv.id FROM products p JOIN product_variant pv ON pv.product_id = p.id WHERE p.user_id = '$user->id') AND MONTH(i.created_at) like MONTH(CURRENT_DATE()) AND i.status = '1';"));
-		$monthincome = $monthincome[0]->summary;
+
+
+		
+		// $monthincome = DB::select(DB::raw("SELECT it.product_id as product_id,SUM(it.suminput) as summary ,i.created_at
+		// 	FROM invoice_item it JOIN invoices i ON it.invoice_id = i.id
+		// 	WHERE it.product_id IN (SELECT pv.id FROM products p JOIN product_variant pv ON pv.product_id = p.id WHERE p.user_id = '$user->id') AND MONTH(i.created_at) like MONTH(CURRENT_DATE()) AND i.status = '1';"));
+		// $monthincome = $monthincome[0]->summary;
+		$monthincome = $summ;
 
 		$weeklyincome = DB::select(DB::raw("SELECT it.product_id,SUM(it.suminput) as summary ,i.created_at created_at,i.status
 			FROM invoice_item it JOIN invoices i ON i.id = it.invoice_id
