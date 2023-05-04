@@ -5,7 +5,7 @@
 @section('content')
 <div class="content">
 	<div class="row js-appear-enabled animated fadeIn" data-toggle="appear">
-		<!-- <div class="col-12 col-xl-4">
+		<div class="col-12 col-xl-4">
 			<a class="block block-rounded block-bordered block-link-shadow" href="/products">
 				<div class="block-content block-content-full clearfix">
 					<div class="float-right mt-15 d-none d-sm-block">
@@ -26,7 +26,7 @@
 					<div class="font-size-sm font-w600 text-uppercase text-muted">ยอดขายรายวัน</div>
 				</div>
 			</a>
-		</div> -->
+		</div>
 		<div class="col-12 col-xl-4">
 			<a class="block block-rounded block-bordered block-link-shadow" href="javascript:void(0)">
 				<div class="block-content block-content-full clearfix">
@@ -40,7 +40,7 @@
 		</div>
 	</div>
 
-	<!-- <div class="row js-appear-enabled animated fadeIn" data-toggle="appear">
+	<div class="row js-appear-enabled animated fadeIn" data-toggle="appear">
 		<div class="col-md-6">
 			<div class="block block-rounded block-bordered">
 				<div class="block-header block-header-default border-b">
@@ -78,7 +78,7 @@
 				</div>
 			</div>
 		</div>
-			<div class="col-md-6">
+		<!-- <div class="col-md-6">
 			<div class="block block-rounded block-bordered">
 				<div class="block-header block-header-default border-b">
 					<h3 class="block-title">10 อันดับสินค้าขายดี</h3>
@@ -110,8 +110,8 @@
 					</table>
 				</div>
 			</div>
-		</div>
-	</div> -->
+		</div> -->
+	</div>
 </div>
 @endsection
 @section('script')
