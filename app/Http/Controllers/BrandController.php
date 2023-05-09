@@ -69,24 +69,35 @@ class BrandController extends Controller
 		}
 		//Income
 		$current = Carbon::now();
+		$startdate = $current->format('Y-m-01');
+		$enddate = $current->format('Y-m-t');
 
-		$invoices = Invoices::with(['getItem' => function ($q) use ($productsArray){
-			$q->whereIn('product_id' , $productsArray);
-		}])
+		$startdate = $startdate." 00:00:00";
+		$enddate = $enddate." 23:59:59";
+
+		// $invoices = Invoices::with(['getItem' => function ($q) use ($productsArray){
+		// 	$q->whereIn('product_id' , $productsArray);
+		// }])
+		
+		$invoices = Invoices::with(['getItem'])
 		->where('status', '=', 1)
-		->whereMonth('created_at', '=', $current->month)
-		->whereYear('created_at', '=', $current->year)
+		->where("created_at",'>=',$startdate)
+		->where("created_at",'<=',$enddate)
 		->get();
+		
 		$summ = 0;
+		
 		foreach($invoices as $invoice){
 			if(!$invoice->getItem->isEmpty()){
 				foreach($invoice->getItem as $item){
-					$summ += $item->price;
+					$productdata = $this->getProductData($item->product_id);
+					$product = $productdata->getProduct;
+					if($product->user_id == Auth::user()->id){
+						$summ += $item->suminput;
+					}
 				}
 			}
 		}
-
-
 		$todayincome = DB::select(DB::raw("SELECT it.product_id as product_id,SUM(it.suminput) as summary ,i.created_at
 			FROM invoice_item it JOIN invoices i ON it.invoice_id = i.id
 			WHERE it.product_id IN (SELECT pv.id FROM products p JOIN product_variant pv ON pv.product_id = p.id WHERE p.user_id = '$user->id') AND i.created_at like CONCAT(CURDATE(),'%') AND i.status = '1'"));
