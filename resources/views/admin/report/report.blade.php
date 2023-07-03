@@ -20,7 +20,7 @@
 							<tr>
 								<th colspan="12" class="text-center"><h2>รายงานยอดขายแบรนด์ {{$brand->brand_name}}</h2></th>
 							</tr>
-														<tr>
+							<tr>
 								<th colspan="12" class="text-center"><p style="font-size: 1.2em;"><b>ยอดขายตั้งแต่วันที่ :</b> {{$startdate}} - {{$enddate}}<br>สาขา :</b> {{$branch->name}}<br>GP: {{$gp}}</p></th>
 							</tr>
 							<tr>
@@ -59,13 +59,13 @@
 							$product = $productdata->getProduct;
 							?>
 							@if(Auth::user()->role!=2)
-							@if($product->user_id!=Auth::user()->id)
-							@continue
-							@endif
+								@if($product->user_id!=Auth::user()->id)
+									@continue
+								@endif
 							@else
-							@if($product->user_id!=$brand_id)
-							@continue
-							@endif
+								@if($product->user_id!=$brand_id)
+									@continue
+								@endif
 							@endif
 							<?php
 							$count++;
@@ -86,11 +86,11 @@
 							$gpcalculate = $gp;
 
 							if($discountrate >= 70){
-								$gpcalculate = $gpcalculate*0.4;
+								$gpcalculate = $gpcalculate*0.75;
 							}else if($discountrate >= 50){
-								$gpcalculate = $gpcalculate*0.6;
+								$gpcalculate = $gpcalculate*0.85;
 							}else if($discountrate >= 30){
-								$gpcalculate = $gpcalculate*0.8;
+								$gpcalculate = $gpcalculate*0.95;
 							}
 
 							if($brand->vat==0){
