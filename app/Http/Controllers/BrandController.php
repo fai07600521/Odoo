@@ -791,9 +791,15 @@ class BrandController extends Controller
 		$startdate = $request->start_date;
 		$enddate = $request->end_date;
 		$branch_id = $request->branch_id;
-
+		$user = Auth::user();
 		if($startdate!=null&&$enddate!=null&&$branch_id!=null){
 			$branch = Branch::find($branch_id);
+			$gp = Branch_user::where('user_id','=',$user->id)->where('branch_id','=',$branch_id)->first();
+			if(isset($gp)){
+				$gp = $gp->gp;
+			}else{
+				$gp = 0;
+			}
 			$startdate = $startdate;
 			$enddate = $enddate;
 			if($startdate==$enddate){
@@ -847,7 +853,7 @@ class BrandController extends Controller
 				}
 			}
 			
-			return view('brand.report.report',compact('reportsum','reportquantity','startdate','enddate','branch','pmethods','sumdiscount','discountpayment','reportsuminput','paymentincome'));
+			return view('brand.report.report',compact('reportsum', 'gp','reportquantity','startdate','enddate','branch','pmethods','sumdiscount','discountpayment','reportsuminput','paymentincome', 'user'));
 		}else{
 			$sysmessage = array(
 				"msgcode" => "500",
