@@ -11,7 +11,7 @@
 					<table id="table2excel" class="table">
 						<thead>
 							<tr>
-								<th class="text-center" colspan="7"><h2>รายงานยอดขาย จาก</h2></th>
+								<th class="text-center" colspan="7"><h2>รายงานยอดขาย</h2></th>
 							</tr>
 							<tr>
 								<th class="text-center" colspan="7"><p style="font-size: 1.2em;"><b>ยอดขายตั้งแต่วันที่ :</b> {{$startdate}} - {{$enddate}}<br>สาขา :</b> {{$branch->name}}</p></th>
@@ -36,12 +36,17 @@
 							$sumquantity = 0;
 							$sumsell = 0;
 							$sumsellAfterGP = 0;
-							$count = 1;
+							$count = 0;
 
 							?>
 							@foreach($reportsum as $key=>$report)
 							<?php
-							$productdata = \App\Http\Controllers\BrandController::getProductData($key);
+							$tmpprodid = \App\Http\Controllers\AdminController::get_string_between($key, "id", "|");
+							$productdata = \App\Http\Controllers\BrandController::getProductData($tmpprodid);
+							if(!isset($productdata)){
+								continue;
+							}
+							$product = $productdata->getProduct;
 							$sellprice = $report; //ราคาจริง*จำนวน
 							$sellinput = $reportsuminput[$key];//ราคาที่ขาย
 							$vat = $sellinput-($sellinput/1.07);//หา VAT จากราคาที่ขาย
@@ -75,9 +80,13 @@
 							$product = $productdata->getProduct;
 							?>
 							@if(Auth::user()->role!=2)
-							@if($product->user_id!=Auth::user()->id)
-							@continue
-							@endif
+								@if($product->user_id!=Auth::user()->id)
+									@continue
+								@endif
+							@else
+								@if($product->user_id!=$brand_id)
+									@continue
+								@endif
 							@endif
 							<?php
 							$count++;

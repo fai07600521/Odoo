@@ -809,7 +809,6 @@ class BrandController extends Controller
 				$enddate = $enddate." 23:59:59";
 				$invoices = Invoices::where("created_at",'>=',$startdate)->where("created_at",'<=',$enddate)->where('branch_id','=',$branch->id)->where("status",'=','1')->get();
 			}
-			
 			$reportsum = array();
 			$reportquantity = array();
 			$reportsuminput = array();
@@ -821,13 +820,13 @@ class BrandController extends Controller
 				$discountpayment[$pment->id] = 0;
 				$paymentincome[$pment->id] = 0;
 			}
-
 			foreach($invoices as $invoice){
 				foreach($invoice->getItem as $item){
+					$tmpprodid = "id".$item->product_id."|". $item->suminput/$item->quantity;
 					try{
-						$reportsum[$item->product_id] += $item->price*$item->quantity;
-						$reportquantity[$item->product_id] += $item->quantity;
-						$reportsuminput[$item->product_id] += $item->suminput;
+						$reportsum[$tmpprodid] += $item->price*$item->quantity;
+						$reportquantity[$tmpprodid] += $item->quantity;
+						$reportsuminput[$tmpprodid] += $item->suminput;
 						if($invoice->paymenttype_id==9){
 							$paymentincome[$invoice->paymenttype_id]  += $item->price*$item->quantity;
 						}else{
@@ -836,9 +835,9 @@ class BrandController extends Controller
 						
 
 					}catch(Exception $e){
-						$reportsum[$item->product_id] = $item->price*$item->quantity;
-						$reportquantity[$item->product_id] = $item->quantity;
-						$reportsuminput[$item->product_id] = $item->suminput;
+						$reportsum[$tmpprodid] = $item->price*$item->quantity;
+						$reportquantity[$tmpprodid] = $item->quantity;
+						$reportsuminput[$tmpprodid] = $item->suminput;
 						if($invoice->paymenttype_id==9){
 							$paymentincome[$invoice->paymenttype_id]  += $item->price*$item->quantity;
 						}else{
@@ -852,7 +851,6 @@ class BrandController extends Controller
 					$discountpayment[$invoice->paymenttype_id] += $promo->discount;
 				}
 			}
-			
 			return view('brand.report.report',compact('reportsum', 'gp','reportquantity','startdate','enddate','branch','pmethods','sumdiscount','discountpayment','reportsuminput','paymentincome', 'user'));
 		}else{
 			$sysmessage = array(
