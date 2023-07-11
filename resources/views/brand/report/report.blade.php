@@ -117,7 +117,7 @@
 								<td class="text-center" colspan="4">รวม</td>
 								<td class="text-center">{{number_format($sumquantity,2)}}</td>
 								<td colspan="2"></td>
-								<td class="text-right">{{number_format($sumsell,2)}}</td>
+								<td class="text-right">{{$sumsell}}</td>
 								<td colspan="3"></td>
 								<td class="text-center">{{number_format($sumsellAfterGP,2)}}</td>
 							</tr>
