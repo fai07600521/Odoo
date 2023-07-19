@@ -1503,6 +1503,84 @@ class AdminController extends Controller
 
 		return response()->json($list);
 	}
+
+	public function getChooseReportBrand(){
+		$user = Auth::user();
+		$branchs = Branch_user::where("user_id",'=',$user->id)->get();
+		return view('admin.report.brand.index',compact('branchs'));
+	}
+
+	public function getReportBrand(Request $request){
+		$startdate = $request->start_date;
+		$enddate = $request->end_date;
+		$branch_id = $request->branch_id;
+
+		if($startdate!=null&&$enddate!=null&&$branch_id!=null){
+			$branch = Branch::find($branch_id);
+			$startdate = $startdate;
+			$enddate = $enddate;
+			if($startdate==$enddate){
+				$invoices = Invoices::where("created_at",'like',$startdate.'%')->where('branch_id','=',$branch->id)->where("status",'=','1')->get();
+			}else{
+				$startdate = $startdate." 00:00:00";
+				$enddate = $enddate." 23:59:59";
+				$invoices = Invoices::where("created_at",'>=',$startdate)->where("created_at",'<=',$enddate)->where('branch_id','=',$branch->id)->where("status",'=','1')->get();
+			}
+			
+			$reportsum = array();
+			$reportquantity = array();
+			$reportsuminput = array();
+			$sumdiscount = 0;
+			$discountpayment = array();
+			$pmethods = Paymenttypes::all();
+			$paymentincome = array();
+			foreach($pmethods as $pment){
+				$discountpayment[$pment->id] = 0;
+				$paymentincome[$pment->id] = 0;
+			}
+
+			foreach($invoices as $invoice){
+				foreach($invoice->getItem as $item){
+					try{
+						$reportsum[$item->product_id] += $item->price*$item->quantity;
+						$reportquantity[$item->product_id] += $item->quantity;
+						$reportsuminput[$item->product_id] += $item->suminput;
+						if($invoice->paymenttype_id==9){
+							$paymentincome[$invoice->paymenttype_id]  += $item->price*$item->quantity;
+						}else{
+							$paymentincome[$invoice->paymenttype_id]  += $item->suminput;
+						}
+						
+
+					}catch(Exception $e){
+						$reportsum[$item->product_id] = $item->price*$item->quantity;
+						$reportquantity[$item->product_id] = $item->quantity;
+						$reportsuminput[$item->product_id] = $item->suminput;
+						if($invoice->paymenttype_id==9){
+							$paymentincome[$invoice->paymenttype_id]  += $item->price*$item->quantity;
+						}else{
+							$paymentincome[$invoice->paymenttype_id]  += $item->suminput;
+						}
+					}
+					
+				}
+				foreach($invoice->getPromotion as $promo){
+					$sumdiscount += $promo->discount;
+					$discountpayment[$invoice->paymenttype_id] += $promo->discount;
+				}
+			}
+			//admin.report.brand.index
+			return view('admin.report.brand.report',compact('reportsum','reportquantity','startdate','enddate','branch','pmethods','sumdiscount','discountpayment','reportsuminput','paymentincome'));
+		}else{
+			$sysmessage = array(
+				"msgcode" => "500",
+				"msg" => "เลือกวันที่เพื่อดูยอดขาย"
+			);
+			return redirect('/report')->with('sysmessage',$sysmessage);
+		}
+
+
+	}
 //====End Report=====	
 //====POSStart=======
 

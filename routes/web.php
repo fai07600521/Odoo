@@ -141,6 +141,9 @@ Route::post('/report','BrandController@getReport');
 Route::get('/admin/report','AdminController@getChooseReport');
 Route::post('/admin/report','AdminController@getReport');
 
+Route::get('/admin/brand/report','AdminController@getChooseReportBrand');
+Route::post('/admin/brand/report','AdminController@getReportBrand');
+
 //[Admin+Brand]Help
 Route::get('/help/{id}','GlobalController@getHelp');
 Route::get('/admin/help','AdminController@getAddHelp');

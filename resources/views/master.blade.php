@@ -123,7 +123,7 @@
                 </a>
             </li>
             <li>
-                <a id="reportdaybtn" href="/report"><i class="si si-bar-chart"></i>
+                <a id="reportdaybtn" href="/admin/brand/report"><i class="si si-bar-chart"></i>
                     <span class="sidebar-mini-hide">สรุปยอดขาย</span>
                 </a>
             </li>
@@ -211,7 +211,7 @@
     <li>    
       <li>
         <a id="reportdaybtn" href="/report"><i class="si si-bar-chart"></i>
-            <span class="sidebar-mini-hide">สรุปยอดขาย</span>
+            <span class="sidebar-mini-hide">สรุปยอดขาย Brand</span>
         </a>        
         <!-- <a id="reportstockbtn" href="/stock"><i class="si si-bar-chart"></i>
             <span class="sidebar-mini-hide">รายงานสต๊อกสินค้า</span>
