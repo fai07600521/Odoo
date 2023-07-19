@@ -791,6 +791,7 @@ class BrandController extends Controller
 		$startdate = $request->start_date;
 		$enddate = $request->end_date;
 		$branch_id = $request->branch_id;
+		$brand_id = $request->brand_id;
 		$user = Auth::user();
 		if($startdate!=null&&$enddate!=null&&$branch_id!=null){
 			$branch = Branch::find($branch_id);
@@ -851,7 +852,7 @@ class BrandController extends Controller
 					$discountpayment[$invoice->paymenttype_id] += $promo->discount;
 				}
 			}
-			return view('brand.report.report',compact('reportsum', 'gp','reportquantity','startdate','enddate','branch','pmethods','sumdiscount','discountpayment','reportsuminput','paymentincome', 'user'));
+			return view('brand.report.report',compact('reportsum', 'gp','reportquantity','startdate','enddate','branch','pmethods','sumdiscount','discountpayment','reportsuminput','paymentincome', 'user', 'brand_id'));
 		}else{
 			$sysmessage = array(
 				"msgcode" => "500",
