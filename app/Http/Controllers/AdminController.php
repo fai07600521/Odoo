@@ -49,23 +49,25 @@ class AdminController extends Controller
 
 	}
 	public static function getDashboardIncome($branch_id){
-		$todaydiscount = DB::select(DB::raw("SELECT SUM(ip.discount) as discount
-			FROM invoices i JOIN invoice_promotion ip ON ip.invoice_id = i.id
-			WHERE i.branch_id = '$branch_id' AND i.status = '1' AND i.created_at LIKE CONCAT(CURDATE(),'%')"));
+		// $todaydiscount = DB::select(DB::raw("SELECT SUM(ip.discount) as discount
+		// 	FROM invoices i JOIN invoice_promotion ip ON ip.invoice_id = i.id
+		// 	WHERE i.branch_id = '$branch_id' AND i.status = '1' AND i.created_at LIKE CONCAT(CURDATE(),'%')"));
 
 		$todayincome = DB::select(DB::raw("SELECT it.product_id as product_id,SUM(it.suminput) as summary ,i.created_at
 			FROM invoice_item it JOIN invoices i ON it.invoice_id = i.id
 			WHERE i.branch_id = '$branch_id' AND it.product_id IN (SELECT pv.id FROM products p JOIN product_variant pv ON pv.product_id = p.id) AND i.created_at like CONCAT(CURDATE(),'%') AND i.status = '1'"));
-		$todayincome = ($todayincome[0]->summary)-$todaydiscount[0]->discount;
+		// $todayincome = ($todayincome[0]->summary)-$todaydiscount[0]->discount;
+		$todayincome = ($todayincome[0]->summary);
 
-		$monthdiscount = DB::select(DB::raw("SELECT SUM(ip.discount) as discount
-			FROM invoices i JOIN invoice_promotion ip ON ip.invoice_id = i.id
-			WHERE i.branch_id = '$branch_id' AND i.status = '1' AND MONTH(i.created_at) like MONTH(CURRENT_DATE())"));
+		// $monthdiscount = DB::select(DB::raw("SELECT SUM(ip.discount) as discount
+		// 	FROM invoices i JOIN invoice_promotion ip ON ip.invoice_id = i.id
+		// 	WHERE i.branch_id = '$branch_id' AND i.status = '1' AND MONTH(i.created_at) like MONTH(CURRENT_DATE())"));
 
 		$monthincome = DB::select(DB::raw("SELECT it.product_id as product_id,SUM(it.suminput) as summary ,i.created_at
 			FROM invoice_item it JOIN invoices i ON it.invoice_id = i.id
 			WHERE i.branch_id = '$branch_id' AND it.product_id IN (SELECT pv.id FROM products p JOIN product_variant pv ON pv.product_id = p.id) AND MONTH(i.created_at) like MONTH(CURRENT_DATE()) AND YEAR(i.created_at) like YEAR(CURRENT_DATE()) AND i.status = '1';"));
-		$monthincome = ($monthincome[0]->summary)-$monthdiscount[0]->discount;
+		// $monthincome = ($monthincome[0]->summary)-$monthdiscount[0]->discount;
+		$monthincome = ($monthincome[0]->summary);
 
 		return array(
 			"today" => $todayincome,
@@ -191,7 +193,6 @@ class AdminController extends Controller
 		}else{
 			$invoices = Invoices::all();
 		}
-
 		return view('admin.order.index',compact('invoices'));
 	}
 	public function getOrder(Request $request){
@@ -1237,7 +1238,7 @@ class AdminController extends Controller
 	}
 	public function getBarcode(Request $request){
 		$barcode = $request->barcode;
-		$product_variant = Product_variant::where("barcode",'=',$barcode)->first();
+		$product_variant = Product_variant::where("barcode",'=',$barcode)->orderBy('id', 'desc')->first();
 		if(isset($product_variant)){
 			$product = $product_variant->getProduct;
 			$price = 0;
@@ -1326,6 +1327,7 @@ class AdminController extends Controller
 				if($product[$i]!=null){
 					if($product[$i]!=0){
 						$data = explode("|", $product[$i]);
+				
 						$sumdata = explode("|", $suminput[$i]);
 						if($data[1]==0){
 							continue;
@@ -1334,6 +1336,7 @@ class AdminController extends Controller
 						$productinfo = $productinfo->getProduct;
 						$promotionchk = 0;
 						$price = $productinfo->price;
+				
 
 						$invoiceitem = new Invoice_item;
 						$invoiceitem->invoice_id = $invoice->id;
@@ -1360,7 +1363,7 @@ class AdminController extends Controller
 						$stock->branch_id = $request->branch_id;
 						$stock->type = "sell";
 						$stock->quantity = $invoiceitem->quantity;
-						$stock->sum = $lastsum-$invoiceitem->quantity;
+						$stock->sum = $lastsum - $invoiceitem->quantity;
 						$stock->remark = "ขายสินค้าหน้าร้าน#".$invoice->id;
 						$stock->save();
 					}
@@ -1963,7 +1966,6 @@ class AdminController extends Controller
 		if(isset($product_variant)){
 			$productname = $product_variant->getProduct->name;
 		}
-
 		$message = "";
 		$today = new DateTime();
 		foreach($promotion_products as $product){
@@ -1973,6 +1975,7 @@ class AdminController extends Controller
 			foreach($branchcheck as $check){
 				array_push($tmp,$check->branch_id);
 			}
+			dd($tmp);
 			if(in_array($request->branch_id,$tmp)){
 				$startdate = new DateTime($promotion->startdate);
 				$enddate = new DateTime($promotion->enddate);
