@@ -30,7 +30,7 @@ services:
     networks:
       - odoo
     ports:
-      - '3306:3306'
+      - "3306:3306"
 
   phpmyadmin:
     image: phpmyadmin
@@ -43,7 +43,7 @@ services:
       - PMA_HOST=db
       - PMA_USER=${DB_USERNAME}
       - PMA_PASSWORD=${DB_PASSWORD}
-      
+
   nginx:
     image: nginx:alpine
     container_name: odoo-nginx
@@ -55,7 +55,6 @@ services:
       - ./docker-compose/nginx:/etc/nginx/conf.d/
     networks:
       - odoo
-
 networks:
   odoo:
     driver: bridge

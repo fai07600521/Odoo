@@ -31,7 +31,7 @@
 				<div class="row">
 					<div id="mainprice" class="col-12">
 						<div id="mainorder">
-							<h4>สมาชิก: <font id="membershow">ขายทั่วไป</font></h4>
+							<h4>สมาชิก: <font id="membershow">ขายทั่วไป นะครับ</font></h4>
 							<h4 class="text-center">รายการขาย</h4>
 							<table style="width: 100%;">
 								<thead>
@@ -723,12 +723,14 @@ function searchItem(name){
 	});
 }
 function checkPromotion(product_id){
+	console.log("sss")
 	$.ajax({
 		type: "POST",
 		data: {product_id:product_id,branch_id:branch_id},
 		url: "/admin/promonotification/checkpromotion",
 		dataType: 'json',
 		success: function(data){
+			console.log(data)
 			if(data.msgcode=="200"){
 				$("#promotionnotificationtxt").html(data.msg);
 				$("#promotionnotificationproducttxt").html(data.product);
@@ -747,6 +749,7 @@ function highlightPromotion(){
 		dataType: 'json',
 		success: function(data){
 			$.each(data, function(index, item) {
+				console.log("#dataproduct"+item)
 				$("#dataproduct"+item).addClass("haspromotion");
 			});
 		}
@@ -761,8 +764,8 @@ function delPromotion(){
 }
 function getPromotion(promotion_id,input_discount){
 	sumdiscount = 0;
-	switch(promotion_id) {
-		case "1":
+			switch(promotion_id) {
+					case "1":
 					//custom discount
 					sumdiscount = sum - input_discount;
 					discount = input_discount;

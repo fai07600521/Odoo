@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Invoice_promotion extends Model
 {
-      protected $table = 'invoice_promotion';
+    protected $table = 'invoice_promotion';
     public $timestamps = true;
 
     public function getPromotion(){

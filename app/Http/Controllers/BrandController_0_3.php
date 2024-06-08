@@ -190,7 +190,7 @@ class BrandController extends Controller
 		}else{
 			$product = Products::where("id",'=',$request->id)->where('user_id','=',$user->id)->first();
 		}
-
+		
 		if(isset($product)){
 			$units = System_unit::all();
 			$users = User::where('role','=','1')->where('status','=',1)->orderBy('brand_name','ASC')->get();
@@ -480,10 +480,11 @@ class BrandController extends Controller
 	public function getPurchase(){
 		$user = Auth::user();
 		if($user->role=="2"){
-			$purchases = Purchaseorders::where("status",'<>','9')->orderBy('id','desc')->limit(10)->get();
+			$purchases = Purchaseorders::where("status",'<>','9')->orderBy('id','desc')->get();
 		}else{
-			$purchases = Purchaseorders::where('user_id','=',$user->id)->where("status",'<>','9')->orderBy('id','desc')->limit(10)->get();
+			$purchases = Purchaseorders::where('user_id','=',$user->id)->where("status",'<>','9')->orderBy('id','desc')->get();
 		}
+		
 		return view('brand.purchase.index',compact('purchases'));
 	}
 
@@ -790,16 +791,9 @@ class BrandController extends Controller
 		$startdate = $request->start_date;
 		$enddate = $request->end_date;
 		$branch_id = $request->branch_id;
-		$brand_id = $request->brand_id;
-		$user = Auth::user();
+
 		if($startdate!=null&&$enddate!=null&&$branch_id!=null){
 			$branch = Branch::find($branch_id);
-			$gp = Branch_user::where('user_id','=',$user->id)->where('branch_id','=',$branch_id)->first();
-			if(isset($gp)){
-				$gp = $gp->gp;
-			}else{
-				$gp = 0;
-			}
 			$startdate = $startdate;
 			$enddate = $enddate;
 			if($startdate==$enddate){
@@ -809,6 +803,7 @@ class BrandController extends Controller
 				$enddate = $enddate." 23:59:59";
 				$invoices = Invoices::where("created_at",'>=',$startdate)->where("created_at",'<=',$enddate)->where('branch_id','=',$branch->id)->where("status",'=','1')->get();
 			}
+			
 			$reportsum = array();
 			$reportquantity = array();
 			$reportsuminput = array();
@@ -820,13 +815,13 @@ class BrandController extends Controller
 				$discountpayment[$pment->id] = 0;
 				$paymentincome[$pment->id] = 0;
 			}
+
 			foreach($invoices as $invoice){
 				foreach($invoice->getItem as $item){
-					$tmpprodid = "id".$item->product_id."|". $item->suminput/$item->quantity;
 					try{
-						$reportsum[$tmpprodid] += $item->price*$item->quantity;
-						$reportquantity[$tmpprodid] += $item->quantity;
-						$reportsuminput[$tmpprodid] += $item->suminput;
+						$reportsum[$item->product_id] += $item->price*$item->quantity;
+						$reportquantity[$item->product_id] += $item->quantity;
+						$reportsuminput[$item->product_id] += $item->suminput;
 						if($invoice->paymenttype_id==9){
 							$paymentincome[$invoice->paymenttype_id]  += $item->price*$item->quantity;
 						}else{
@@ -835,9 +830,9 @@ class BrandController extends Controller
 						
 
 					}catch(Exception $e){
-						$reportsum[$tmpprodid] = $item->price*$item->quantity;
-						$reportquantity[$tmpprodid] = $item->quantity;
-						$reportsuminput[$tmpprodid] = $item->suminput;
+						$reportsum[$item->product_id] = $item->price*$item->quantity;
+						$reportquantity[$item->product_id] = $item->quantity;
+						$reportsuminput[$item->product_id] = $item->suminput;
 						if($invoice->paymenttype_id==9){
 							$paymentincome[$invoice->paymenttype_id]  += $item->price*$item->quantity;
 						}else{
@@ -851,7 +846,8 @@ class BrandController extends Controller
 					$discountpayment[$invoice->paymenttype_id] += $promo->discount;
 				}
 			}
-			return view('brand.report.report',compact('reportsum', 'gp','reportquantity','startdate','enddate','branch','pmethods','sumdiscount','discountpayment','reportsuminput','paymentincome', 'user', 'brand_id'));
+			
+			return view('brand.report.report',compact('reportsum','reportquantity','startdate','enddate','branch','pmethods','sumdiscount','discountpayment','reportsuminput','paymentincome'));
 		}else{
 			$sysmessage = array(
 				"msgcode" => "500",

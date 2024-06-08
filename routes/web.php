@@ -12,7 +12,7 @@
 */
 
 Route::post('/test','PhotoController@create');
-Route::get('/test','PhotoController@index');
+Route::get('/test','AdminController@checkNotiPromotion');
 
 Auth::routes();
 

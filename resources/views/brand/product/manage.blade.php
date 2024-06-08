@@ -105,7 +105,7 @@
 									<div class="form-group row">
 										<label class="col-12" for="barcode">บาร์โค๊ด</label>
 										<div class="col-md-12">
-											<input type="text" class="form-control" id="barcode" name="barcode" placeholder="กรอกบาร์โค๊ด" value="{{isset($product) ? $product->getVariant[0]->barcode : ''}}">
+											<input type="text" class="form-control" id="barcode" name="barcode" placeholder="กรอกบาร์โค๊ด" value="{{isset($product->getVariant[0]) ? $product->getVariant[0]->barcode : ''}}">
 										</div>
 									</div>
 									<div class="form-group row">

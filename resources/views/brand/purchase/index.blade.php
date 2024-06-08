@@ -26,7 +26,7 @@
 						<tr>
 							<td>{{$purchase->id}}</td>
 							<td>
-								<b>แบรนด์</b> : {{$purchase->getUser->brand_name}}<br>
+								<b>แบรนด์</b> : {{$purchase->getUser ? $purchase->getUser->brand_name : "ddd"}}<br>
 								<b>เข้าสาขา</b> : {{$purchase->getBranch->name}}<br>
 								<b>วันที่</b> : {{$purchase->shipdate}}
 							</td>
