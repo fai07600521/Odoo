@@ -236,6 +236,7 @@ class BrandController extends Controller
 			$product->unit_id = $request->unit_id;
 			$product->status = "1";
 			$product->description = $request->description;
+			$product->ref = $request->ref;
 			$product->save();
 
 			$product_variants = $request->product_variants;
@@ -326,6 +327,7 @@ class BrandController extends Controller
 					$product->user_id = $request->user_id;
 				}
 				$product->description = $request->description;
+				$product->ref = $request->ref;
 				$product->save();
 
 				$old_variants = $request->old_variants;
@@ -480,9 +482,9 @@ class BrandController extends Controller
 	public function getPurchase(){
 		$user = Auth::user();
 		if($user->role=="2"){
-			$purchases = Purchaseorders::where("status",'<>','9')->orderBy('id','desc')->limit(10)->get();
+			$purchases = Purchaseorders::where("status",'<>','9')->orderBy('id','desc')->get();
 		}else{
-			$purchases = Purchaseorders::where('user_id','=',$user->id)->where("status",'<>','9')->orderBy('id','desc')->limit(10)->get();
+			$purchases = Purchaseorders::where('user_id','=',$user->id)->where("status",'<>','9')->orderBy('id','desc')->get();
 		}
 		return view('brand.purchase.index',compact('purchases'));
 	}
