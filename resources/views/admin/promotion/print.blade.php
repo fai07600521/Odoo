@@ -141,27 +141,30 @@ function DateThai($strDate){
 		?>
 		@foreach($products as $product)
 		<?php
-
 			if($count%30==0&&$count!=0){
 				echo "<div class='col-12' style='padding:15px;'></div>";
 			}
 			$productdata = $product->getProductVariant;
-			$productdata = $productdata->getProduct;
-			$count++;
+			if(isset($productdata)){
+				$productdata = $productdata->getProduct;
+				$count++;
+			}
 		?>
-		<div class="col-4">
-			<div style="background-image: url('/printpromotion.jpg'); background-size: cover; width: 8cm; height:3.98cm; text-align: center; border:1px solid black;">
-				<div  style="margin-top:0cm; margin-left:1.25cm; width: 80%; padding: 0.2cm;">
-					<div class="top" style="position:relative; width:80%; text-align: center; margin:0 auto; min-height:3cm;">
-						<span style="margin: 0; text-align: center;">{{$productdata->getUser->brand_name}} {{$productdata->name}}</span>
-					</div>
-					<div class="bottom" style="position:relative; width:100%; margin-top:-5px;">
-						<span style="margin: 0;">ลดเหลือ <font style="background:black; color: #FFF;"> {{$product->price}}.-</font> จากปกติ {{$productdata->price}}.-</span>
+			@if(isset($productdata))
+				<div class="col-4">
+					<div style="background-image: url('/printpromotion.jpg'); background-size: cover; width: 8cm; height:3.98cm; text-align: center; border:1px solid black;">
+						<div  style="margin-top:0cm; margin-left:1.25cm; width: 80%; padding: 0.2cm;">
+							<div class="top" style="position:relative; width:80%; text-align: center; margin:0 auto; min-height:3cm;">
+								<span style="margin: 0; text-align: center;">{{$productdata->getUser->brand_name}} {{$productdata->name}}</span>
+							</div>
+							<div class="bottom" style="position:relative; width:100%; margin-top:-5px;">
+								<span style="margin: 0;">ลดเหลือ <font style="background:black; color: #FFF;"> {{$product->price}}.-</font> จากปกติ {{$productdata->price}}.-</span>
+							</div>
+						</div>
+
 					</div>
 				</div>
-
-			</div>
-		</div>
+			@endif
 		@endforeach
 	</div>
 

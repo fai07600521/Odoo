@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-	<title> {{$_ENV['APP_NAME']}} | POS</title>
+	<title>{{$_ENV['APP_NAME']}} | POS</title>
 	<meta name="description" content="GIST - Multibrand Store System">
 	<meta name="author" content="Jirapat Hangjaraon">
 	<meta property="og:title" content="GIST - Multibrand Store System">
@@ -190,6 +190,17 @@
 									</select>
 								</div>
 							</div>
+
+							<div class="form-group row">
+								<label class="col-12">เลือกภาษาของใบเสร็จ</label>
+								<div class="col-12">
+									<select id="language-slip" class="form-control">
+										<option value="TH">ไทย</option>
+										<option value="EN">English</option>
+									</select>
+								</div>
+							</div>
+
 							<div class="form-group row">
 								<div class="col-6 text-left">
 									<i id="preload" style="display: none;" class="fa fa-2x fa-asterisk fa-spin"></i>
@@ -342,6 +353,28 @@
 						</div>
 						<div class="block-content">
 							<p id="promotionnotificationtxt"></p>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-alt-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="modal-promotionauto" tabindex="-1" role="dialog" aria-labelledby="modal-fadein" aria-hidden="true" style="display: none;">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="block block-themed block-transparent mb-0">
+						<div class="block-header bg-primary-dark">
+							<h3 id="promotionautoproducttxt" class="block-title"></h3>
+							<div class="block-options">
+								<button type="button" class="btn-block-option" data-dismiss="modal" aria-label="Close">
+									<i class="si si-close"></i>
+								</button>
+							</div>
+						</div>
+						<div class="block-content">
+							<p id="promotionautotxt"></p>
 						</div>
 					</div>
 					<div class="modal-footer">
@@ -528,12 +561,14 @@
 							$("#tableorder").html("");
 							$("#tablepromotion").html("");
 							$("#memberselect").val(0);
-							window.open("{{$_ENV['APP_URL']}}/admin/pos/slip/"+msg);
+							
+							window.open("{{$_ENV['APP_URL']}}/admin/pos/slip/"+msg+"?lang="+$("#language-slip").val());
 							Swal.fire({
 								type: 'success',
 								title: 'บันทึกข้อมูลเรียบร้อย',
 								text: 'ระบบบันทึกข้อมูลการขายเรียบร้อยแล้ว'
 							})
+							$("#language-slip").val("TH")
 							$("#checkoutbtn").fadeIn();
 						}else{
 							Swal.fire({
@@ -862,7 +897,6 @@ function getPromotion(promotion_id,input_discount){
      dataType: 'json',
      success: function(data){
       if(data.msgcode=="200"){
-       
        showmodal = 1;
        promoprice = data.promoprice;
        modalmsg = data.msg;
@@ -873,9 +907,9 @@ function getPromotion(promotion_id,input_discount){
 					product_price = promoprice;
 				}
 				if(showmodal==1){
-					$("#promotionnotificationtxt").html(modalmsg);
-					$("#promotionnotificationproducttxt").html(product_name);
-					$("#modal-promotionnotification").modal();
+					$("#promotionautotxt").html(modalmsg);
+					$("#promotionautoproducttxt").html(product_name);
+					$("#modal-promotionauto").modal();
 				}
 
 					//End Check Main Promotion
