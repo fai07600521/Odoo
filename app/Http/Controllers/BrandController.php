@@ -237,6 +237,8 @@ class BrandController extends Controller
 			$product->status = "1";
 			$product->description = $request->description;
 			$product->ref = $request->ref;
+			$product->shopeeModelId = $request->shopeeModelId;
+			$product->shopeeItemId = $request->shopeeItemId;
 			$product->save();
 
 			$product_variants = $request->product_variants;
@@ -328,6 +330,8 @@ class BrandController extends Controller
 				}
 				$product->description = $request->description;
 				$product->ref = $request->ref;
+				$product->shopeeModelId = $request->shopeeModelId;
+				$product->shopeeItemId = $request->shopeeItemId;
 				$product->save();
 
 				$old_variants = $request->old_variants;
