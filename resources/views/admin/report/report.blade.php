@@ -85,12 +85,18 @@
 							
 							$gpcalculate = $gp;
 
+		
+
 							if($discountrate >= 70){
 								$gpcalculate = $gpcalculate*0.75;
 							}else if($discountrate >= 50){
 								$gpcalculate = $gpcalculate*0.85;
 							}else if($discountrate >= 30){
 								$gpcalculate = $gpcalculate*0.95;
+							}
+
+							if($branch->id == 17){
+								$gpcalculate = $gp;
 							}
 
 							if($brand->vat==0){
