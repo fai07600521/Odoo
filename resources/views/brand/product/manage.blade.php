@@ -117,19 +117,19 @@
 									<div class="form-group row">
 										<label class="col-12" for="ref">Ref</label>
 										<div class="col-md-12">
-											<input type="text" class="form-control" id="ref" name="ref" placeholder="ref" value="{{isset($product) ? $product->ref : ''}}" required="">
+											<input type="text" class="form-control" id="ref" name="ref" placeholder="ref" value="{{isset($product) ? $product->ref : ''}}">
 										</div>
 									</div>
 									<div class="form-group row">
 										<label class="col-12" for="shopeeItemId">Shopee Item ID</label>
 										<div class="col-md-12">
-											<input type="text" class="form-control" id="shopeeItemId" name="shopeeItemId" placeholder="shopeeItemId" value="{{isset($product) ? $product->shopeeItemId : ''}}" required="">
+											<input type="text" class="form-control" id="shopeeItemId" name="shopeeItemId" placeholder="shopeeItemId" value="{{isset($product) ? $product->shopeeItemId : ''}}">
 										</div>
 									</div>
 									<div class="form-group row">
 										<label class="col-12" for="description">Shopee Model ID</label>
 										<div class="col-md-12">
-											<input type="text" class="form-control" id="shopeeModelId" name="shopeeModelId" placeholder="shopeeModelId" value="{{isset($product) ? $product->shopeeModelId : ''}}" required="">
+											<input type="text" class="form-control" id="shopeeModelId" name="shopeeModelId" placeholder="shopeeModelId" value="{{isset($product) ? $product->shopeeModelId : ''}}">
 										</div>
 									</div>
 									@if(isset($product))
