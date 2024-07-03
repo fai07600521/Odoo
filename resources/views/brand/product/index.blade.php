@@ -39,6 +39,7 @@
 							<td class="text-center">#</td>
 							<td class="text-center">รูปสินค้า</td>
 							<td class="text-center">ข้อมูลสินค้า</td>
+							<td class="text-center">SKU</td>
 							<td class="text-center">สถานะ</td>
 							<td class="text-center">การกระทำ</td>
 						</tr>
@@ -63,6 +64,7 @@
 									@endforeach
 								</b>
 							</td>
+							<td>{{$product->ref}}</td>
 							<td>
 								@if($product->status==0)
 								<span class="badge badge-danger">ระงับการขาย</span>
