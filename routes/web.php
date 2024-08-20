@@ -135,6 +135,10 @@ Route::get('/purchase/barcode/{id}','BrandController@printBarcode');
 Route::get('/purchase/print/{id}','BrandController@printPO');
 Route::get('/purchase/printpo/{id}','BrandController@printPONew');
 
+
+Route::get('/product/getProductByRef','BrandController@getProductByRef')->name('product.ref');
+Route::post('/product/addNewProduct','BrandController@addNewProduct')->name('product.new');
+
 Route::get('/report','BrandController@getChooseReport');
 Route::post('/report','BrandController@getReport');
 

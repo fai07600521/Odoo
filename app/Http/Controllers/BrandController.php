@@ -915,6 +915,105 @@ class BrandController extends Controller
 
 		return response()->json($list);
 	}
+	// New Product For count stock
+	public function getProductByRef(Request $request){
+		$ref = $request->ref;
+		$product = Products::where("ref",'=',$request->ref)->first();
+		$status = $product ? true : false;
+		return response()->json(['status' => $status]);
+	}
+
+	public function addNewProduct(Request $request){
+		$validator = $this->validateManageProduct($request->all());
+		if(sizeOf($validator->errors())==0){
+			$user = Auth::user();
+			$product = new Products;
+			$product->name = $request->name;
+			if($user->role=="1"){
+				$product->user_id = Auth::user()->id;
+			}else{
+				$product->user_id = $request->user_id;
+			}
+			$product->discount_type = $request->discount_type;
+			$product->discount_price = $request->discount_price;
+			if($request->hasFile('picture')){
+				$frontpath = $_ENV['FRONTPATH'];
+				$extension = $request->picture->getClientOriginalExtension();
+				if($extension=="php"){
+					echo "denied";
+					die();
+				}
+				$fileName = $this->generateRandomString().".".$extension;
+				$request->picture->move($frontpath, $fileName);
+				$product->pic_url = "/storage/".$fileName;
+			}else{
+				$product->pic_url = "/assets/system/nopic.png";
+			}
+			$product->price = $request->price;
+			$product->unit_id = $request->unit_id;
+			$product->status = "1";
+			$product->description = $request->description;
+			$product->ref = $request->ref;
+			$product->shopeeModelId = $request->shopeeModelId;
+			$product->shopeeItemId = $request->shopeeItemId;
+			$product->isShopeeSync = 1;
+			$product->save();
+
+			$product_variants = $request->product_variants;
+			if($product_variants!=null){
+				for($i=0;$i<sizeOf($product_variants);$i++){
+					$prodvariant = new Product_variant;
+					$prodvariant->product_id = $product->id;
+					$prodvariant->variant = $product_variants[$i];
+					$prodvariant->barcode = $this->getNewBarcode();
+					$prodvariant->save();
+				}
+			}else{
+				$prodvariant = new Product_variant;
+				$prodvariant->product_id = $product->id;
+				$prodvariant->variant = "";
+				$prodvariant->barcode = $request->barcode;
+				$prodvariant->save();
+			}
+				$sizetag = sizeOf(explode(',',$request->tags));
+				$intag = explode(',',$request->tags);
+				if($sizetag!=0){
+					for($i=0;$i<$sizetag;$i++){
+						if($intag[$i]!=""){
+							$tag = Tags::where('name','=',$intag[$i])->first();
+							if(!isset($tag)){
+								$tag = new Tags;
+								$tag->name = $intag[$i];
+								$tag->save();
+							}
+								$product_tag = new Product_tag;
+								$product_tag->product_id = $product->id;
+								$product_tag->tag_id = $tag->id;
+								$product_tag->save();
+						}
+					}
+				}
+				$brand = $product->getUser;
+			return response()->json([
+				'status' => 1, 
+				'message' => 'success', 
+				'productVariant' => $prodvariant, 
+				'product' => $product,
+				'brand' => $brand,
+				'type' => 'newProduct'
+			]);
+
+		}else{
+			$units = System_unit::all();
+			$error = $validator->errors()->all();
+			$message = "";
+			for($i=0;$i<sizeOf($error);$i++){
+				$message.= $error[$i];
+			}
+			return response()->json(['status' => 0, 'message' => $message]);
+		}
+
+	}
 }
 
 
