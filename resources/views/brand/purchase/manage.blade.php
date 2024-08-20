@@ -246,12 +246,12 @@
 			function sendToBackend(id){
 				Swal.fire({
 					title: "Are you sure?",
-					text: "You won't be able to revert this!",
+					text: "ยืนยันการรับสินค้า",
 					type: "warning",
 					showCancelButton: true,
 					confirmButtonColor: "#3085d6",
 					cancelButtonColor: "#d33",
-					confirmButtonText: "Yes, delete it!"
+					confirmButtonText: "ยืนยัน"
 				}).then((result) => {
 					if (result.value) {
 						$.ajax({
@@ -270,7 +270,7 @@
 										stock,
 										type
 									}),
-									url: "http://localhost:3000/system",
+									url: "https://pos-shopee.suttipongact.com/system",
 									type: "POST",
 									contentType: 'application/json',
 									dataType: 'json',

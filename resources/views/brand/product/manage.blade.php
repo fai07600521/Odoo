@@ -272,7 +272,7 @@
 									type,
 									brand
 								}),
-								url: "http://localhost:3000/system",
+								url: "https://pos-shopee.suttipongact.com/system",
 								type: "POST",
 								contentType: 'application/json',
 								dataType: 'json',

@@ -2128,9 +2128,8 @@ class AdminController extends Controller
 		$len = strpos($string, $end, $ini) - $ini;
 		return substr($string, $ini, $len);
 	}
-}
 
-//==== Count Stock =====
+	//==== Count Stock =====
 public function recieveNewProduct(Request $request){
 	$user = Auth::user();
 	if($user->role!=2){
@@ -2175,3 +2174,5 @@ public function recieveNewProduct(Request $request){
 		'stock' => $myArray
 	]);
 }
+}
+
