@@ -58,6 +58,7 @@ Route::get('/admin/stock/adjust','AdminController@getStockAdjust');
 Route::post('/admin/stock/adjust','AdminController@adjustStock');
 Route::post('/admin/stock/productcheck','AdminController@getProductStock');
 Route::get('/admin/purchase/recieve/{id}','AdminController@recieveProduct');
+Route::get('/admin/purchase/recieveNew/{id}','AdminController@recieveNewProduct')->name('recieveProduct');
 
 
 //[Admin] Stock Transfer Report
@@ -76,8 +77,10 @@ Route::get('/stock','BrandController@getStock');
 Route::get('/admin/brand','AdminController@getBrand');
 Route::get('/admin/brand/add','AdminController@getAddBrand');
 Route::post('/admin/brand/add','AdminController@addBrand');
+Route::post('/admin/brand/newBrand','AdminController@addNewBrand')->name('brand.new');
 Route::get('/admin/brand/get/{id}','AdminController@getEditBrand');
 Route::post('/admin/brand/update','AdminController@updateBrand');
+Route::post('/admin/brand/updateNew','AdminController@updateBrandNew')->name('brand.update');
 Route::get('/admin/brand/suspend/{id}','AdminController@suspendBrand');
 Route::get('/admin/brand/unsuspend/{id}','AdminController@unsuspendBrand');
 
@@ -109,6 +112,8 @@ Route::post('/admin/branch/remove','AdminController@removefromBranch');
 //[Brand]Product Manage
 Route::get('/products/add','BrandController@getAddProduct');
 Route::post('/products/add','BrandController@addProduct');
+Route::post('/products/newProduct','BrandController@addNewProduct')->name('product.new');
+Route::get('/products/getProductByRef','BrandController@getProductByRef')->name('product.ref');
 Route::get('/products/suspend/{id}','BrandController@suspendProduct');
 Route::get('/products/unsuspend/{id}','BrandController@unsuspendProduct');
 Route::get('/products/barcodeprint','BrandController@getPrintBarcode');
@@ -129,8 +134,8 @@ Route::get('/purchase','BrandController@getPurchase');
 Route::get('/purchase/get/{id}','BrandController@showPurchase');
 Route::get('/products','BrandController@getProduct');
 Route::post('/products','BrandController@getProduct');
-Route::get('/products/get/{id}','BrandController@getEditProduct');
-Route::post('/products/update','BrandController@updateProduct');
+Route::get('/products/get/{id}','BrandController@getEditProduct')->name('product.show');
+Route::post('/products/update','BrandController@updateProductNew')->name('product.update');
 Route::get('/purchase/barcode/{id}','BrandController@printBarcode');
 Route::get('/purchase/print/{id}','BrandController@printPO');
 Route::get('/purchase/printpo/{id}','BrandController@printPONew');

@@ -299,6 +299,105 @@ class BrandController extends Controller
 
 	}
 
+	public function addNewProduct(Request $request){
+		$validator = $this->validateManageProduct($request->all());
+		if(sizeOf($validator->errors())==0){
+			$user = Auth::user();
+			$product = new Products;
+			$product->name = $request->name;
+			if($user->role=="1"){
+				$product->user_id = Auth::user()->id;
+			}else{
+				$product->user_id = $request->user_id;
+			}
+			$product->discount_type = $request->discount_type;
+			$product->discount_price = $request->discount_price;
+			if($request->hasFile('picture')){
+				$frontpath = $_ENV['FRONTPATH'];
+				$extension = $request->picture->getClientOriginalExtension();
+				if($extension=="php"){
+					echo "denied";
+					die();
+				}
+				$fileName = $this->generateRandomString().".".$extension;
+				$request->picture->move($frontpath, $fileName);
+				$product->pic_url = "/storage/".$fileName;
+			}else{
+				$product->pic_url = "/assets/system/nopic.png";
+			}
+			$product->price = $request->price;
+			$product->unit_id = $request->unit_id;
+			$product->status = "1";
+			$product->description = $request->description;
+			$product->ref = $request->ref;
+			$product->shopeeModelId = $request->shopeeModelId;
+			$product->shopeeItemId = $request->shopeeItemId;
+			$product->isShopeeSync = 1;
+			$product->save();
+
+			$product_variants = $request->product_variants;
+			if($product_variants!=null){
+				for($i=0;$i<sizeOf($product_variants);$i++){
+					$prodvariant = new Product_variant;
+					$prodvariant->product_id = $product->id;
+					$prodvariant->variant = $product_variants[$i];
+					$prodvariant->barcode = $this->getNewBarcode();
+					$prodvariant->save();
+				}
+			}else{
+				$prodvariant = new Product_variant;
+				$prodvariant->product_id = $product->id;
+				$prodvariant->variant = "";
+				$prodvariant->barcode = $request->barcode;
+				$prodvariant->save();
+			}
+				$sizetag = sizeOf(explode(',',$request->tags));
+				$intag = explode(',',$request->tags);
+				if($sizetag!=0){
+					for($i=0;$i<$sizetag;$i++){
+						if($intag[$i]!=""){
+							$tag = Tags::where('name','=',$intag[$i])->first();
+							if(!isset($tag)){
+								$tag = new Tags;
+								$tag->name = $intag[$i];
+								$tag->save();
+							}
+								$product_tag = new Product_tag;
+								$product_tag->product_id = $product->id;
+								$product_tag->tag_id = $tag->id;
+								$product_tag->save();
+						}
+					}
+				}
+				$brand = $product->getUser;
+			return response()->json([
+				'status' => 1, 
+				'message' => 'success', 
+				'productVariant' => $prodvariant, 
+				'product' => $product,
+				'user' => $brand,
+				'type' => 'newProduct'
+			]);
+
+		}else{
+			$units = System_unit::all();
+			$error = $validator->errors()->all();
+			$message = "";
+			for($i=0;$i<sizeOf($error);$i++){
+				$message.= $error[$i];
+			}
+			return response()->json(['status' => 0, 'message' => 'fail']);
+		}
+
+	}
+
+	public function getProductByRef(Request $request){
+		$ref = $request->ref;
+		$product = Products::where("ref",'=',$request->ref)->first();
+		$status = $product ? true : false;
+		return response()->json(['status' => $status]);
+	}
+
 	public function updateProduct(Request $request){
 		
 		$user = Auth::user();
@@ -405,6 +504,102 @@ class BrandController extends Controller
 		}
 	}
 
+	public function updateProductNew(Request $request){
+		
+		$user = Auth::user();
+		if($user->role==2){
+			$product = Products::where("id",'=',$request->id)->first();
+		}else{
+			$product = Products::where("id",'=',$request->id)->where('user_id','=',$user->id)->first();
+		}
+		if(isset($product)){
+			$validator = $this->validateManageProduct($request->all());
+			if(sizeOf($validator->errors())==0){
+				$product->name = $request->name;
+				$product->discount_type = $request->discount_type;
+				$product->discount_price = $request->discount_price;
+				if($request->hasFile('picture')){
+					$frontpath = $_ENV['FRONTPATH'];
+					$extension = $request->picture->getClientOriginalExtension();
+					if($extension=="php"){
+						echo "denied";
+						die();
+					}
+					$fileName = $this->generateRandomString().".".$extension;
+					$request->picture->move($frontpath, $fileName);
+					$product->pic_url = "/storage/".$fileName;
+				}
+				$product->price = $request->price;
+				$product->unit_id = $request->unit_id;
+				if($user->role=="2"){
+					$product->user_id = $request->user_id;
+				}
+				$product->description = $request->description;
+				$product->ref = $request->ref;
+				$product->shopeeModelId = $request->shopeeModelId;
+				$product->shopeeItemId = $request->shopeeItemId;
+				$product->isShopeeSync = 1;
+				$product->save();
+
+				$old_variants = $request->old_variants;
+				if($old_variants!=null){
+					foreach($old_variants as $key=>$val){
+						$prodvariant = Product_variant::find($key);
+						$prodvariant->variant = $val;
+						$prodvariant->barcode = $request->barcode;
+						$prodvariant->save();
+					}
+				}
+
+				$product_variants = $request->product_variants;
+				if($product_variants!=null){
+					for($i=0;$i<sizeOf($product_variants);$i++){
+						$prodvariant = new Product_variant;
+						$prodvariant->product_id = $product->id;
+						$prodvariant->variant = $product_variants[$i];
+						$prodvariant->barcode = $request->barcode;
+						$prodvariant->save();
+					}
+				}
+
+				Product_tag::where('product_id','=',$product->id)->delete();
+				$sizetag = sizeOf(explode(',',$request->tags));
+				$intag = explode(',',$request->tags);
+				if($sizetag!=0){
+					for($i=0;$i<$sizetag;$i++){
+						if($intag[$i]!=""){
+							$tag = Tags::where('name','=',$intag[$i])->first();
+							if(!isset($tag)){
+								$tag = new Tags;
+								$tag->name = $intag[$i];
+								$tag->save();
+							}
+								$product_tag = new Product_tag;
+								$product_tag->product_id = $product->id;
+								$product_tag->tag_id = $tag->id;
+								$product_tag->save();
+						}
+					}
+				}
+
+
+				return response()->json([
+					'status' => 1, 
+					'message' => 'success', 
+					'productVariant' => $prodvariant, 
+					'product' => $product,
+					'type' => 'updateProduct'
+				]);
+				// return redirect('/products/get/'.$product->id)->with('sysmessage',$message);
+
+			}else{
+				return response()->json(['status' => 0, 'message' => 'fail']);
+			}
+		}else{
+			return response()->json(['status' => 0, 'message' => 'fail']);
+		}
+	}
+
 	public function suspendProduct(Request $request){
 		$user = Auth::user();
 		if($user->role=="2"){
@@ -488,9 +683,9 @@ class BrandController extends Controller
 	public function getPurchase(){
 		$user = Auth::user();
 		if($user->role=="2"){
-			$purchases = Purchaseorders::where("status",'<>','9')->orderBy('id','desc')->get();
+			$purchases = Purchaseorders::where("status",'<>','9')->orderBy('id','desc')->limit(100)->get();
 		}else{
-			$purchases = Purchaseorders::where('user_id','=',$user->id)->where("status",'<>','9')->orderBy('id','desc')->get();
+			$purchases = Purchaseorders::where('user_id','=',$user->id)->where("status",'<>','9')->orderBy('id','desc')->limit(100)->get();
 		}
 		return view('brand.purchase.index',compact('purchases'));
 	}

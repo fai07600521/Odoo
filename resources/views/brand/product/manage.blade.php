@@ -18,10 +18,11 @@
 	<div class="col-12">
 		<div class="block">
 			@if(isset($product))
-			<form method="POST" action="/products/update" enctype="multipart/form-data">
-				<input hidden="" name="id" value="{{$product->id}}">
-				@else
-				<form method="POST" action="/products/add" enctype="multipart/form-data">
+				<form method="POST"  id="updateProduct" enctype="multipart/form-data">
+				<input hidden="" id="id" name="id" value="{{$product->id}}">
+			@else
+				<form method="POST"  id="addNewProduct" value="" enctype="multipart/form-data">
+				<input hidden="" id="id" name="id" value="">
 					@endif
 					{{csrf_field()}}
 					<div class="block-content">
@@ -198,7 +199,7 @@
 
 									<div class="row">
 										<div class="col-12 ">
-											<input type="submit" value="ยืนยัน" class="btn btn-primary pull-right">
+											<input type="submit" id="saveBtn" value="ยืนยัน" class="btn btn-primary pull-right">
 											@if(isset($product))
 											@if($product->status==1)
 											<a href="/products/suspend/{{$product->id}}" onclick="return confirm('คุณมั่นใจที่จะระงับการขายสินค้า {{$product->name}}? ')"   class="pull-right btn btn-danger"><i class="si si-ban"></i> ระงับ</a>
@@ -222,6 +223,102 @@
 		@section('script')
 		<script src="/js/fm.tagator.jquery.js"></script>
 		<script type="text/javascript">
+			$("#ref").blur(function(){
+				$.ajax({
+					url: '{{ route('product.ref')}}',
+                    method: 'GET',
+                    data: {
+                        ref:  $(this).val()
+                    },
+					success: function (response) {
+						const status = response.status
+						if(status){
+							Swal.fire({
+                                title: 'REF ซ้ำ',
+                                type: 'error',
+                                showConfirmButton: true,
+								allowOutsideClick: false
+                            });
+						}
+					}
+                });
+			});
+			$('#saveBtn').on('click', function (event) {
+				event.preventDefault();
+	
+				const productId = document.getElementById('id').value ? document.getElementById('id').value : null;
+				if(productId){
+					$.ajax({
+						data: $('#updateProduct').serialize(),
+						url: "{{ route('product.update') }}",
+						type: "POST",
+						dataType: 'json',
+						success: function (response) {
+							const productVariant = response.productVariant;
+							const product = response.product;
+							const type = response.type;
+							$.ajax({
+								data: JSON.stringify({
+									productVariant,
+									product,
+									type
+								}),
+								url: "http://localhost:3000/system",
+								type: "POST",
+								contentType: 'application/json',
+								dataType: 'json',
+								success: function (response) {
+									Swal.fire({
+										title: 'Create Product Success',
+										type: 'success',
+										timer: 1500,
+										showConfirmButton: false,
+										onAfterClose: () => {
+											window.location.href = '/products/get/' + product.id;
+										}
+									});
+								}
+							});
+						}
+					});
+				}else{
+					$.ajax({
+						data: $('#addNewProduct').serialize(),
+						url: "{{ route('product.new') }}",
+						type: "POST",
+						dataType: 'json',
+						success: function (response) {
+							const productVariant = response.productVariant;
+							const product = response.product;
+							const type = response.type;
+							const user = response.user;
+							$.ajax({
+								data: JSON.stringify({
+									productVariant,
+									product,
+									type,
+									user
+								}),
+								url: "http://localhost:3000/system",
+								type: "POST",
+								contentType: 'application/json',
+								dataType: 'json',
+								success: function (response) {
+									Swal.fire({
+										title: 'Create Product Success',
+										type: 'success',
+										timer: 1500,
+										showConfirmButton: false,
+										// onAfterClose: () => {
+										// 	window.location.href = '/products/get/' + product.id;
+										// }
+									});
+								}
+							});
+						}
+					});
+				}
+			});
 			$("#productbtn").addClass("active");
 			$count = 0;
 			function addItem(){
@@ -234,8 +331,8 @@
 				$("#btnitem"+id).remove();
 			}
 			$("#product-tags").tagator({
-  autocomplete: [@foreach($tags as $tag)'{{$tag->name}}',@endforeach'']
-});
+				autocomplete: [@foreach($tags as $tag)'{{$tag->name}}',@endforeach'']
+			});
 
 		</script>
 		@endsection

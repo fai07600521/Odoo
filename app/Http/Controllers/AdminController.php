@@ -322,6 +322,45 @@ class AdminController extends Controller
 		}
 
 	}
+	public function addNewBrand(Request $request){
+		$validator = $this->validateManageBrand($request->all());
+		$tmpuser = User::where("email",'=',$request->email)->first();
+		if($tmpuser!=null){
+			return response()->json([
+				'status' => 0, 
+				'message' => 'fail'
+			]);
+		}
+		if(sizeOf($validator->errors())==0){
+			$user = new User;
+			$user->name = $request->name;
+			$user->email = $request->email;
+			$user->password = Hash::make($request->password);
+			$user->role = "1";
+			$user->line = $request->line;
+			$user->branch = $request->branch;
+			$user->tax_id = $request->tax_id;
+			$user->address = $request->address;
+			$user->brand_name = $request->brand_name;
+			$user->status = "1";
+			if($request->vat!=null){
+				$user->vat = "1";
+			}else{
+				$user->vat = "0";
+			}
+			$user->save();
+			return response()->json([
+				'status' => 1, 
+				'message' => 'success', 
+				'user' => $user,
+				'type' => 'newBrand'
+			]);
+		}else{
+			return response()->json([
+				'status' => 0, 
+				'message' => 'fail']);
+		}
+	}
 	public function getEditBrand(Request $request){
 		$user = User::find($request->id);
 		if(isset($user)){
@@ -380,6 +419,54 @@ class AdminController extends Controller
 					"msg" => $message
 				);
 				return redirect('/admin/brand/get/'.$user->id)->with('sysmessage',$sysmessage);
+			}
+		}
+	}
+
+	public function updateBrandNew(Request $request){
+		$validator = $this->validateManageBrand($request->all());
+		$user = User::where("id",'=',$request->id)->first();
+		if(!isset($user)){
+			return response()->json([
+				'status' => 0, 
+				'message' => 'fail'
+			]);
+		}else{
+			if(sizeOf($validator->errors())==0){
+				$user->name = $request->name;
+				$user->email = $request->email;
+				if($request->password!=null){
+					$user->password = Hash::make($request->password);
+				}
+				$user->role = "1";
+				$user->line = $request->line;
+				$user->address = $request->address;
+				$user->tax_id = $request->tax_id;
+				$user->branch = $request->branch;
+				$user->brand_name = $request->brand_name;
+				$user->status = "1";
+				if($request->vat!=null){
+					$user->vat = "1";
+				}else{
+					$user->vat = "0";
+				}
+				$user->save();
+				return response()->json([
+					'status' => 1, 
+					'message' => "เพิ่มแบรนด์ ".$request->brand_name."เรียบร้อยแล้ว", 
+					'user' => $user,
+					'type' => 'updateBrand'
+				]);
+
+			}else{
+				$error = $validator->errors()->all();
+				$message = "";
+				for($i=0;$i<sizeOf($error);$i++){
+					$message.= $error[$i];
+				}
+				return response()->json([
+					'status' => 0, 
+					'message' => $message]);
 			}
 		}
 	}
@@ -811,6 +898,48 @@ class AdminController extends Controller
 			"msg" => "นำสินค้าเข้าร้านเรียบร้อยแล้ว"
 		);
 		return redirect('/purchase/get/'.$purchase->id)->with('sysmessage',$message);
+	}
+	public function recieveNewProduct(Request $request){
+		$user = Auth::user();
+		if($user->role!=2){
+			return response()->json([
+				'status' => 0, 
+				'message' => $sysmessage
+			]);
+		}
+		$purchase = Purchaseorders::where('id','=',$request->id)->first();
+		
+
+		$items = $purchase->getItem;
+		$myArray = []; 
+		foreach($items as $item){
+			$laststock = Stocks::where("branch_id",'=',$purchase->branch_id)->where("product_id",'=',$item->product_id)->orderBy('id','desc')->first();
+			$lastsum = 0;
+			if(isset($laststock)){
+				$lastsum = $laststock->sum;
+			}
+
+			$stock = new Stocks;
+			$stock->product_id = $item->product_id;
+			$stock->branch_id = $purchase->branch_id;
+			$stock->type = "add";
+			$stock->quantity = $item->quantity;
+			$stock->sum = $lastsum+$item->quantity;
+			$stock->remark = "รับสินค้าเข้าจากใบนำเข้าเลขที่ ".$purchase->id;
+			
+			$stock->save();
+			array_push($myArray, $stock);
+		}
+		$purchase->admin_id = $user->id;
+		$purchase->status = 1;
+		$purchase->save();
+		return response()->json([
+			'status' => 1, 
+			'message' => 'success',
+			'type' => 'PO',
+			'purchase'=> $purchase,
+			'stock' => $myArray
+		]);
 	}
 //========================End Purchase Manage=======================
 
