@@ -2121,12 +2121,58 @@ class AdminController extends Controller
 		return view('admin.promotionprint.print',compact('brand_name','product_name','quantity','price'));
 	}
 	public static function get_string_between($string, $start, $end){
-    $string = ' ' . $string;
-    $ini = strpos($string, $start);
-    if ($ini == 0) return '';
-    $ini += strlen($start);
-    $len = strpos($string, $end, $ini) - $ini;
-    return substr($string, $ini, $len);
+		$string = ' ' . $string;
+		$ini = strpos($string, $start);
+		if ($ini == 0) return '';
+		$ini += strlen($start);
+		$len = strpos($string, $end, $ini) - $ini;
+		return substr($string, $ini, $len);
+	}
+
+	//==== Count Stock =====
+public function recieveNewProduct(Request $request){
+	$user = Auth::user();
+	if($user->role!=2){
+		$sysmessage = array(
+			"msgcode" => "500",
+			"msg" => "ไม่มีสิทธิในการรับสินค้า"
+		);
+		return response()->json([
+			'status' => 0, 
+			'message' => $sysmessage
+		]);
+	}
+	$purchase = Purchaseorders::where('id','=',$request->id)->first();
+	
+
+	$items = $purchase->getItem;
+	$myArray = []; 
+	foreach($items as $item){
+		$laststock = Stocks::where("branch_id",'=',$purchase->branch_id)->where("product_id",'=',$item->product_id)->orderBy('id','desc')->first();
+		$lastsum = 0;
+		if(isset($laststock)){
+			$lastsum = $laststock->sum;
+		}
+		$stock = new Stocks;
+		$stock->product_id = $item->product_id;
+		$stock->branch_id = $purchase->branch_id;
+		$stock->type = "add";
+		$stock->quantity = $item->quantity;
+		$stock->sum = $lastsum+$item->quantity;
+		$stock->remark = "รับสินค้าเข้าจากใบนำเข้าเลขที่ ".$purchase->id;
+		$stock->save();
+		array_push($myArray, $stock);
+	}
+	$purchase->admin_id = $user->id;
+	$purchase->status = 1;
+	$purchase->save();
+	return response()->json([
+		'status' => 1, 
+		'message' => 'success',
+		'type' => 'PO',
+		'purchase'=> $purchase,
+		'stock' => $myArray
+	]);
+}
 }
 
-}

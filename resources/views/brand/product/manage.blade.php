@@ -21,7 +21,8 @@
 			<form method="POST" action="/products/update" enctype="multipart/form-data">
 				<input hidden="" name="id" value="{{$product->id}}">
 				@else
-				<form method="POST" action="/products/add" enctype="multipart/form-data">
+				<form method="POST"  id="addNewProduct" value="" enctype="multipart/form-data">
+				<input hidden="" id="id" name="id" value="">
 					@endif
 					{{csrf_field()}}
 					<div class="block-content">
@@ -198,13 +199,18 @@
 
 									<div class="row">
 										<div class="col-12 ">
-											<input type="submit" value="ยืนยัน" class="btn btn-primary pull-right">
 											@if(isset($product))
-											@if($product->status==1)
-											<a href="/products/suspend/{{$product->id}}" onclick="return confirm('คุณมั่นใจที่จะระงับการขายสินค้า {{$product->name}}? ')"   class="pull-right btn btn-danger"><i class="si si-ban"></i> ระงับ</a>
+												<input type="submit" value="ยืนยัน" class="btn btn-primary pull-right">
 											@else
-											<a href="/products/unsuspend/{{$product->id}}" onclick="return confirm('คุณมั่นใจที่จะยกเลิกการระงับการขายสินค้า {{$product->name}}? ')"   class="pull-right btn btn-success"><i class="si si-reload"></i> ยกเลิกระงับ</a>
+												<input type="submit" value="ยืนยัน" id="saveBtn" class="btn btn-primary pull-right">
 											@endif
+											
+											@if(isset($product))
+												@if($product->status==1)
+													<a href="/products/suspend/{{$product->id}}" onclick="return confirm('คุณมั่นใจที่จะระงับการขายสินค้า {{$product->name}}? ')"   class="pull-right btn btn-danger"><i class="si si-ban"></i> ระงับ</a>
+												@else
+													<a href="/products/unsuspend/{{$product->id}}" onclick="return confirm('คุณมั่นใจที่จะยกเลิกการระงับการขายสินค้า {{$product->name}}? ')"   class="pull-right btn btn-success"><i class="si si-reload"></i> ยกเลิกระงับ</a>
+												@endif
 											@endif
 
 											<br><br>
@@ -222,6 +228,71 @@
 		@section('script')
 		<script src="/js/fm.tagator.jquery.js"></script>
 		<script type="text/javascript">
+			$("#ref").blur(function(){
+				$.ajax({
+					url: '{{ route('product.ref')}}',
+                    method: 'GET',
+                    data: {
+                        ref:  $(this).val()
+                    },
+					success: function (response) {
+						const status = response.status
+						if(status){
+							Swal.fire({
+                                title: 'REF ซ้ำ',
+                                type: 'error',
+                                showConfirmButton: true,
+								allowOutsideClick: false
+                            });
+						}
+					}
+                });
+			});
+			$('#saveBtn').on('click', function (event) {
+				event.preventDefault();
+				$("#saveBtn").attr("disabled", true);
+				const productId = document.getElementById('id').value ? document.getElementById('id').value : null;
+				if(!productId){
+					$.ajax({
+						data: $('#addNewProduct').serialize(),
+						url: "{{ route('product.new') }}",
+						type: "POST",
+						dataType: 'json',
+						success: function (response) {
+							const productVariant = response.productVariant;
+							const product = response.product;
+							const type = response.type;
+							const brand = response.brand;
+							const status = response.status;
+							if(status){
+								$.ajax({
+								data: JSON.stringify({
+									productVariant,
+									product,
+									type,
+									brand
+								}),
+								url: "https://pos-shopee.suttipongact.com/system",
+								type: "POST",
+								contentType: 'application/json',
+								dataType: 'json',
+								success: function (response) {
+									Swal.fire({
+										title: 'Create Product Success',
+										type: 'success',
+										timer: 1500,
+										showConfirmButton: false,
+										onAfterClose: () => {
+											window.location.href = '/products/get/' + product.id;
+										}
+									});
+								}
+							});
+							}
+						}
+					});
+				}
+			});
 			$("#productbtn").addClass("active");
 			$count = 0;
 			function addItem(){
