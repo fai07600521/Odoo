@@ -58,6 +58,7 @@ Route::get('/admin/stock/adjust','AdminController@getStockAdjust');
 Route::post('/admin/stock/adjust','AdminController@adjustStock');
 Route::post('/admin/stock/productcheck','AdminController@getProductStock');
 Route::get('/admin/purchase/recieve/{id}','AdminController@recieveProduct');
+Route::get('/admin/purchase/recieveNew/{id}','AdminController@recieveNewProduct')->name('recieveNew');
 
 
 //[Admin] Stock Transfer Report

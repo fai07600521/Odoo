@@ -197,7 +197,7 @@
 											@if($purchase->status!=1)
 											@if($purchase->status==0)
 											@if(Auth::user()->role==2)
-											<a style="margin-right: 10px;" href="/admin/purchase/recieve/{{$purchase->id}}" onclick="return confirm('คุณมั่นใจที่จะนำสินค้าเข้าร้าน? ')"   class="pull-right btn btn-success"><i class="si si-login"></i> รับสินค้าเข้าร้าน</a>
+											<a style="margin-right: 10px;" onclick="sendToBackend({{$purchase->id}})" class="pull-right btn btn-success"><i class="si si-login"></i> รับสินค้าเข้าร้าน</a>
 											@endif
 											<a style="margin-right: 10px;" href="/purchase/cancel/{{$purchase->id}}" onclick="return confirm('คุณมั่นใจที่จะยกเลิกใบนำเข้านี้ใช่หรือไม่? ')"   class="pull-right btn btn-danger"><i class="si si-ban"></i> ยกเลิกใบนำเข้า</a>
 											@endif
@@ -242,6 +242,58 @@
 				variant = `<div id='item${count}' class="col-8 fixpad"><input type="text" name="products[]" hidden class="form-control" value='${product_id}'><input type="text" class="form-control" value='${product_name}'></div><div class="col-2" id="nameitem${count}"><input type="number" name="quantity[]" value='${quantity}' class="form-control" required></div><div id="btnitem${count}" class="col-2"><a href="javascript:delitem('${count}');" class="btn btn-danger"><i class="fa fa-trash"></i>ลบ</a><br></div>`;
 				$("#varintfield").append(variant);
 				count++;
+			}
+			function sendToBackend(id){
+				Swal.fire({
+					title: "Are you sure?",
+					text: "You won't be able to revert this!",
+					type: "warning",
+					showCancelButton: true,
+					confirmButtonColor: "#3085d6",
+					cancelButtonColor: "#d33",
+					confirmButtonText: "Yes, delete it!"
+				}).then((result) => {
+					if (result.value) {
+						$.ajax({
+						url: `/admin/purchase/recieveNew/${id}`,
+						type: "GET",
+						dataType: 'json',
+						success: function (response) {
+							const status = response.status;
+							const purchase = response.purchase;
+							const stock = response.stock;
+							const type = response.type;
+							if(status){
+								$.ajax({
+									data: JSON.stringify({
+										purchase,
+										stock,
+										type
+									}),
+									url: "http://localhost:3000/system",
+									type: "POST",
+									contentType: 'application/json',
+									dataType: 'json',
+									success: function (response) {
+										Swal.fire({
+											title: 'นำเข้าสำเร็จ',
+											type: 'success',
+											timer: 1500,
+											showConfirmButton: false,
+											onAfterClose: () => {
+												window.location.reload();
+											}
+										});
+									}
+								});
+							}
+						}
+					});
+					} else if (result.isDenied) {
+						Swal.fire("Changes are not saved", "", "info");
+					}
+				});
+				// href="/admin/purchase/recieve/{{$purchase->id}}"
 			}
 			function delitem(id){
 				$("#item"+id).remove();
