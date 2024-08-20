@@ -488,9 +488,9 @@ class BrandController extends Controller
 	public function getPurchase(){
 		$user = Auth::user();
 		if($user->role=="2"){
-			$purchases = Purchaseorders::where("status",'<>','9')->orderBy('id','desc')->limit(100)->get();
+			$purchases = Purchaseorders::where("status",'<>','9')->orderBy('id','desc')->limit(1000)->get();
 		}else{
-			$purchases = Purchaseorders::where('user_id','=',$user->id)->where("status",'<>','9')->limit(100)->orderBy('id','desc')->get();
+			$purchases = Purchaseorders::where('user_id','=',$user->id)->where("status",'<>','9')->limit(1000)->orderBy('id','desc')->get();
 		}
 		return view('brand.purchase.index',compact('purchases'));
 	}
