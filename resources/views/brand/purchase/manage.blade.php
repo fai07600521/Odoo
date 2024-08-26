@@ -293,7 +293,6 @@
 						Swal.fire("Changes are not saved", "", "info");
 					}
 				});
-				// href="/admin/purchase/recieve/{{$purchase->id}}"
 			}
 			function delitem(id){
 				$("#item"+id).remove();
