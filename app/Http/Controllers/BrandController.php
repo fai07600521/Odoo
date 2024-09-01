@@ -555,7 +555,8 @@ class BrandController extends Controller
 		$totalRecords = $query->count();
 	
 		// Get paginated results
-		$purchases = $query->orderBy('id', 'desc')
+		$purchases = $query->orderBy('status', 'asc')
+							->orderBy('id', 'desc')
 							->skip($offset)
 							->take($perPage)
 							->with(['getUser', 'getBranch'])
