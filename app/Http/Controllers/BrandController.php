@@ -486,14 +486,93 @@ class BrandController extends Controller
 //======================Start Purchase Manage=======================
 
 	public function getPurchase(){
-		$user = Auth::user();
-		if($user->role=="2"){
-			$purchases = Purchaseorders::where("status",'<>','9')->orderBy('id','desc')->get();
-		}else{
-			$purchases = Purchaseorders::where('user_id','=',$user->id)->where("status",'<>','9')->orderBy('id','desc')->get();
-		}
-		return view('brand.purchase.index',compact('purchases'));
+		// $user = Auth::user();
+		// if($user->role=="2"){
+		// 	$purchases = 
+		// Purchaseorders::where("status",'<>','9')
+		// ->orderBy('id','desc')
+		// ->limit(10)
+		// ->get();
+		// }else{
+		// 	$purchases = Purchaseorders::where('user_id','=',$user->id)->where("status",'<>','9')->orderBy('id','desc')->limit(10)->get();
+		// }
+		return view('brand.purchase.index');
 	}
+
+	/*
+	public function getNewPurchaseWithPagination(Request $request){
+		$user = Auth::user();
+		$page = $request->get('page', 1);
+		$perPage = $request->get('per_page', 10); // Get per_page from the DataTables request
+		$offset = ($page - 1) * $perPage;
+		$draw = $request->get('draw'); // Draw counter for DataTables
+		if ($user->role == "2") {
+			$query = Purchaseorders::where("status", '<>', '9');
+		} else {
+			$query = Purchaseorders::where('user_id', '=', $user->id)
+									->where("status", '<>', '9');
+		}
+		$totalRecords = $query->count();
+	
+		// Get paginated results
+		$purchases = $query->orderBy('id', 'desc')
+							->skip($offset)
+							->take($perPage)
+							->with(['getUser', 'getBranch'])
+							->get();
+	
+		// Calculate total pages
+		$totalPages = ceil($totalRecords / $perPage);
+		// Return JSON response
+		return response()->json([
+			'data' => $purchases,
+			'pagination' => [
+				'draw' => intval($draw),
+				'recordsTotal' => $totalRecords,
+				'totalPages' => $totalPages,
+				'currentPage' => $page,
+				'perPage' => $perPage,
+			],
+		]);
+	}
+		*/
+
+	public function getNewPurchaseWithPagination(Request $request) {
+		$user = Auth::user();
+		$page = $request->get('page', 1);
+		$perPage = $request->get('per_page', 10); // Get per_page from the DataTables request
+		$offset = ($page - 1) * $perPage;
+		$draw = $request->get('draw'); // Draw counter for DataTables
+	
+		if ($user->role == "2") {
+			$query = Purchaseorders::where("status", '<>', '9');
+		} else {
+			$query = Purchaseorders::where('user_id', '=', $user->id)
+									->where("status", '<>', '9');
+		}
+
+	
+		$totalRecords = $query->count();
+	
+		// Get paginated results
+		$purchases = $query->orderBy('id', 'desc')
+							->skip($offset)
+							->take($perPage)
+							->with(['getUser', 'getBranch'])
+							->get();
+	
+		// Calculate filtered records
+		$recordsFiltered = $totalRecords; // Assuming no filtering, so same as totalRecords
+	
+		// Return JSON response in the format DataTables expects
+		return response()->json([
+			'draw' => intval($draw), // Draw counter
+			'recordsTotal' => $totalRecords, // Total records
+			'recordsFiltered' => $recordsFiltered, // Filtered records count
+			'data' => $purchases // Data array
+		]);
+	}
+		
 
 	public function getAddPurchase(){
 		$users = User::where('role','=','1')->where('status','=','1')->orderBy('brand_name','ASC')->get();

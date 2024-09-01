@@ -127,6 +127,7 @@ Route::get('/purchase/cancel/{id}','BrandController@cancelPurchase');
 
 //[Admin+Brand]Global Route
 Route::get('/purchase','BrandController@getPurchase');
+Route::get('/getNewPurchaseWithPagination','BrandController@getNewPurchaseWithPagination')->name('purchase');
 Route::get('/purchase/get/{id}','BrandController@showPurchase');
 Route::get('/products','BrandController@getProduct');
 Route::post('/products','BrandController@getProduct');
