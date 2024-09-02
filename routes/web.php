@@ -14,10 +14,13 @@
 Route::post('/test','PhotoController@create');
 Route::get('/test','AdminController@checkNotiPromotion');
 
+
 Auth::routes();
 
 //Auth Fix
 Auth::routes();
+
+Route::get('/api/stock','StockController@getStockTransferWithPagination')->name('tranferStock');
 
 Route::get('/checkauth','CheckAuthController@getCheck');
 Route::get('/logout',function(){

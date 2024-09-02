@@ -1023,9 +1023,10 @@ class AdminController extends Controller
 	}
 
 	public function getStockTransfer(){
-		$stockadjs = Stock_transfer::orderBy('id','desc')->get();
-		return view('admin.stock.transferindex',compact('stockadjs'));
+		// $stockadjs = Stock_transfer::orderBy('id','desc')->get();
+		return view('admin.stock.transferindex');
 	}
+
 
 	public function getStockCreate(){
 		$products = Products::where('status','=','1')->get();

@@ -104,11 +104,12 @@
 						</div>
 						@if(isset($stockadj))
 						@foreach($stockadj->getItem as $key=> $item)
-						<div id="nameitemk{{$key}}" class="col-8">
-							<input hidden="" name="products[]" value="{{$item->getProductVariant->id}}">
+						<div id="nameitemk{{$key}}" class="col-6">
+							<input hidden="" class="products-input" name="products[]" value="{{$item->getProductVariant->id}}">
 							<input disabled="" value="{{$item->getProductVariant->getProduct->name}} ({{$item->getProductVariant->variant}}) ({{$item->getProductVariant->getProduct->price}} บาท)" class="form-control">
 						</div>
-						<div id="itemk{{$key}}" class="col-2"><input type="number" value="{{$item->quantity}}" name="quantity[]" required="" class="form-control"></div>
+						<input class="form-control col-2" disabled="" value="{{$item->getProductVariant->id}}">
+						<div id="itemk{{$key}}" class="col-2"><input type="number" value="{{$item->quantity}}" name="quantity[]" required="" class="form-control quantity-input"></div>
 						<div id="btnitemk{{$key}}" class="col-2"><a href="javascript:delitem('k{{$key}}');" class="btn btn-danger"><i class="fa fa-trash"></i>ลบ</a><br></div>
 						@endforeach
 						@endif
@@ -135,8 +136,14 @@
 						
 						@endif
 						<input type="submit" value="บันทึก" class="btn btn-primary pull-right" >
-							<br><br>
-</div>
+						<br><br>
+						</div>
+					</div>
+					<div class="row text-right">
+						<div class="col">
+							<button type="button" onclick="copyVariant()" class="btn btn-success">Copy VaraintId</button>
+							<button type="button" onclick="copyQuantities()" class="btn btn-info">Copy Quantities</button>
+						</div>
 					</div>
 				</div>
 			</form>
@@ -165,6 +172,39 @@
 		$("#btnitem"+id).remove();
 		$("#nameitem"+id).remove();
 	}
+
+	function copyVariant(){
+		const inputsproducts = document.querySelectorAll(".products-input");
+		const quantitiesproducts = Array.from(inputsproducts).map(function(input) {
+			return input.value;
+		});
+		const csvContent = quantitiesproducts.join("\n");
+		navigator.clipboard.writeText(csvContent); //products
+		Swal.fire({
+			title: 'copy variant success',
+			type: 'success',
+			timer: 1500,
+			showConfirmButton: false,
+		});
+	}
+
+
+	function copyQuantities() {
+		const inputs = document.querySelectorAll(".quantity-input");
+		const quantities = Array.from(inputs).map(function(input) {
+			return input.value;
+		});
+		const csvContent = quantities.join("\n");
+		navigator.clipboard.writeText(csvContent);
+		Swal.fire({
+			title: 'copy quantities success',
+			type: 'success',
+			timer: 1500,
+			showConfirmButton: false,
+		});
+	}
+
+
 </script>
 <script type="text/javascript">
 	brand_id = 0;
