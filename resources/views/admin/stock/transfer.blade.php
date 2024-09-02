@@ -179,13 +179,27 @@
 			return input.value;
 		});
 		const csvContent = quantitiesproducts.join("\n");
-		navigator.clipboard.writeText(csvContent); //products
-		Swal.fire({
-			title: 'copy variant success',
-			type: 'success',
-			timer: 1500,
-			showConfirmButton: false,
-		});
+		const textarea = document.createElement("textarea");
+		textarea.value = csvContent;
+		document.body.appendChild(textarea);
+		textarea.select();
+		try {
+			var successful = document.execCommand('copy');
+			if (successful) {
+				Swal.fire({
+					title: 'copy quantities success',
+					type: 'success',
+					timer: 1500,
+					showConfirmButton: false,
+				});
+			} else {
+				console.error('Failed to copy text to clipboard');
+			}
+		} catch (err) {
+			console.error('Error copying to clipboard: ', err);
+		}
+		document.body.removeChild(textarea);
+		navigator.clipboard.writeText(csvContent);
 	}
 
 
@@ -195,13 +209,28 @@
 			return input.value;
 		});
 		const csvContent = quantities.join("\n");
+		const textarea = document.createElement("textarea");
+		textarea.value = csvContent;
+		document.body.appendChild(textarea);
+		textarea.select();
+		try {
+			var successful = document.execCommand('copy');
+			if (successful) {
+				Swal.fire({
+					title: 'copy quantities success',
+					type: 'success',
+					timer: 1500,
+					showConfirmButton: false,
+				});
+			} else {
+				console.error('Failed to copy text to clipboard');
+			}
+		} catch (err) {
+			console.error('Error copying to clipboard: ', err);
+		}
+		document.body.removeChild(textarea);
 		navigator.clipboard.writeText(csvContent);
-		Swal.fire({
-			title: 'copy quantities success',
-			type: 'success',
-			timer: 1500,
-			showConfirmButton: false,
-		});
+
 	}
 
 
