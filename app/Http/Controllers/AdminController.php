@@ -168,9 +168,6 @@ class AdminController extends Controller
 			
 			return view('admin.order.brandsales',compact('brands','report','startdate','enddate','discountreport','branchs','branchname','branch_id','gp'));
 		}else{
-			$startdate = "แสดงทั้งหมด";
-			$enddate = "";
-			$invoices = Invoices::where("status",'=','1')->get();
 			return view('admin.order.brandsales',compact('brands','branchs'));
 		}
 
@@ -1439,6 +1436,7 @@ class AdminController extends Controller
 			$sumdiscount = 0;
 			$discountpayment = array();
 			$pmethods = Paymenttypes::all();
+			$reportrealprice = array();
 			foreach($pmethods as $pment){
 				$discountpayment[$pment->id] = 0;
 			}
