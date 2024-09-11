@@ -12,3 +12,6 @@ npm-debug.log
 yarn-error.log
 
 /docker-compose/mysql
+
+.DS_Store
+**/.DS_Store
