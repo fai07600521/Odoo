@@ -68,6 +68,10 @@
 								$gpcalculate = $gpcalculate*0.95;
 							}
 
+							if($branch->id == 17){
+								$gpcalculate = $gp;
+							}
+
 							if($user->vat==0){
 								$result = ($sellinput-$vat)-(($sellinput-$vat)*$gpcalculate/100);
 							}else{
