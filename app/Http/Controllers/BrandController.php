@@ -543,6 +543,7 @@ class BrandController extends Controller
 		$perPage = $request->get('per_page', 10); // Get per_page from the DataTables request
 		$offset = ($page - 1) * $perPage;
 		$draw = $request->get('draw'); // Draw counter for DataTables
+		$search = $request->get('search');
 	
 		if ($user->role == "2") {
 			$query = Purchaseorders::where("status", '<>', '9');
@@ -552,19 +553,26 @@ class BrandController extends Controller
 		}
 
 	
-		$totalRecords = $query->count();
+
 	
 		// Get paginated results
 		$purchases = $query->orderBy('status', 'asc')
 							->orderBy('id', 'desc')
 							->skip($offset)
 							->take($perPage)
-							->with(['getUser', 'getBranch'])
-							->get();
-	
+							->with(['getUser', 'getBranch']);
+		if($search){
+			$purchases = $purchases->where('id', $search)
+			->orWhereHas('getUser', function ($query) use ($search) {
+				$query->where('brand_name', 'like', '%' . $search . '%');
+			})
+			;
+		}
+		$totalRecords = $purchases->count();
+		$purchases = $purchases->get();
+
 		// Calculate filtered records
 		$recordsFiltered = $totalRecords; // Assuming no filtering, so same as totalRecords
-	
 		// Return JSON response in the format DataTables expects
 		return response()->json([
 			'draw' => intval($draw), // Draw counter

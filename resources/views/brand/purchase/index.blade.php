@@ -45,6 +45,7 @@
 				data: function(d) {
 					d.page = (d.start / d.length) + 1;
 					d.per_page = d.length;
+                    d.search = d.search.value;
             	}
             },
             "columns": [

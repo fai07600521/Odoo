@@ -42,6 +42,7 @@
                 "url": "{{ route('tranferStock') }}", // Adjust to your route
                 "type": "GET",
 				data: function(d) {
+                    d.search = d.search.value;
 					d.page = (d.start / d.length) + 1;
 					d.per_page = d.length;
             	}
