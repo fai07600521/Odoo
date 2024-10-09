@@ -8,7 +8,7 @@
 @endsection
 @section('content')
 <div class="content">
-	<h2 class="content-heading">รายงานสต๊อกสินค้า</h2>
+	<h2 class="content-heading">รายงานสต๊อกสินค้า2</h2>
 	<div class="col-12">
 		<div class="block">
 			<form method="POST" action="/admin/stock/report">
@@ -44,12 +44,12 @@
 		</div>
 	</div>
 	@if($flag!=0)
-	<div class="col-12">
+	<div class="col-10">
 		<div class="block">
 			<div class="block-content">
 				@if($flag==1)
 				<h4>สต๊อกสินค้า: {{$user->brand_name}}</h4>
-				<table class="table table-hover data-table">
+				<table class="table table-responsive table-hover data-table">
 					<thead>
 						<tr>
 							<td class="text-center">แบรนด์</td>
@@ -95,7 +95,7 @@
 				</table>
 				@else
 				<h4>สต๊อกสินค้าทั้งหมด</h4>
-				<table class="table table-hover data-table">
+				<table class="table table-responsive table-hover data-table">
 					<thead>
 						<tr>
 							<td class="text-center">แบรนด์</td>
@@ -162,7 +162,9 @@
 		dom: 'Bfrtip',
 		buttons: [
             'excelHtml5'
-        ]
+        ],
+		"responsive": true,  
+		"autoWidth": false,
 	});
 </script>
 <script>jQuery(function(){ Codebase.helpers(['select2']); });</script>
