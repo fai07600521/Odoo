@@ -44,7 +44,7 @@
 		</div>
 	</div>
 	@if($flag!=0)
-	<div class="col-10">
+	<div class="col-12">
 		<div class="block">
 			<div class="block-content">
 				@if($flag==1)
