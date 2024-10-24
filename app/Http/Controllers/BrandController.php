@@ -544,42 +544,47 @@ class BrandController extends Controller
 		$offset = ($page - 1) * $perPage;
 		$draw = $request->get('draw'); // Draw counter for DataTables
 		$search = $request->get('search');
-	
+		
+		// Base query depending on user role
 		if ($user->role == "2") {
 			$query = Purchaseorders::where("status", '<>', '9');
 		} else {
 			$query = Purchaseorders::where('user_id', '=', $user->id)
 									->where("status", '<>', '9');
 		}
-
-	
-
-	
-		// Get paginated results
-		$purchases = $query->orderBy('status', 'asc')
-							->orderBy('id', 'desc')
-							->skip($offset)
-							->take($perPage)
-							->with(['getUser', 'getBranch']);
-		if($search){
-			$purchases = $purchases->where('id', $search)
-			->orWhereHas('getUser', function ($query) use ($search) {
-				$query->where('brand_name', 'like', '%' . $search . '%');
-			})
-			;
+		
+		// Get the total number of records before applying search filters or pagination
+		$totalRecords = $query->count();
+		
+		// Apply search filtering if necessary
+		if ($search) {
+			$query->where(function ($query) use ($search) {
+				$query->where('id', $search) // Search by ID
+					  ->orWhereHas('getUser', function ($query) use ($search) {
+						  $query->where('brand_name', 'like', '%' . $search . '%'); // Search by brand_name in getUser relation
+					  });
+			});
 		}
-		$totalRecords = $purchases->count();
-		$purchases = $purchases->get();
-
-		// Calculate filtered records
-		$recordsFiltered = $totalRecords; // Assuming no filtering, so same as totalRecords
+		
+		// Get the total number of filtered records (after search filtering)
+		$recordsFiltered = $query->count();
+		
+		// Apply pagination (skip and take)
+		$purchases = $query->orderBy('status', 'asc')
+						   ->orderBy('id', 'desc')
+						   ->skip($offset)
+						   ->take($perPage)
+						   ->with(['getUser', 'getBranch'])
+						   ->get();
+		
 		// Return JSON response in the format DataTables expects
 		return response()->json([
 			'draw' => intval($draw), // Draw counter
-			'recordsTotal' => $totalRecords, // Total records
-			'recordsFiltered' => $recordsFiltered, // Filtered records count
-			'data' => $purchases // Data array
+			'recordsTotal' => $totalRecords, // Total number of records (before filtering)
+			'recordsFiltered' => $recordsFiltered, // Number of records after filtering
+			'data' => $purchases // Data to display in the table
 		]);
+		
 	}
 		
 
