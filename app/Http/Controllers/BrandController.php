@@ -239,6 +239,8 @@ class BrandController extends Controller
 			$product->ref = $request->ref;
 			$product->shopeeModelId = $request->shopeeModelId;
 			$product->shopeeItemId = $request->shopeeItemId;
+			$product->lazadaItemId = $request->lazadaItemId;
+			$product->lazadaModelId = $request->lazadaModelId;
 			$product->isShopeeSync = 1;
 			$product->save();
 
@@ -333,6 +335,8 @@ class BrandController extends Controller
 				$product->ref = $request->ref;
 				$product->shopeeModelId = $request->shopeeModelId;
 				$product->shopeeItemId = $request->shopeeItemId;
+				$product->lazadaItemId = $request->lazadaItemId;
+				$product->lazadaModelId = $request->lazadaModelId;
 				$product->isShopeeSync = 1;
 				$product->save();
 

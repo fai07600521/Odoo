@@ -133,6 +133,19 @@
 											<input type="text" class="form-control" id="shopeeModelId" name="shopeeModelId" placeholder="shopeeModelId" value="{{isset($product) ? $product->shopeeModelId : ''}}">
 										</div>
 									</div>
+
+									<div class="form-group row">
+										<label class="col-12" for="lazadaItemId">Lazada Item ID</label>
+										<div class="col-md-12">
+											<input type="text" class="form-control" id="lazadaItemId" name="lazadaItemId" placeholder="lazadaItemId" value="{{isset($product) ? $product->lazadaItemId : ''}}">
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-12" for="lazadaModelId">Lazada Model ID</label>
+										<div class="col-md-12">
+											<input type="text" class="form-control" id="lazadaModelId" name="lazadaModelId" placeholder="lazadaModelId" value="{{isset($product) ? $product->lazadaModelId : ''}}">
+										</div>
+									</div>
 									@if(isset($product))
 									<div class="form-group row">
 										<label class="col-12" for="product-tags">Tag</label>
