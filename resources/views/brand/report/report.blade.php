@@ -104,7 +104,7 @@
 								<td class="text-center">{{$reportquantity[$key]}}</td>
 								<td class="text-center"> {{number_format($report,2)}}</td>
 								<td class="text-center"> {{number_format($report-$reportsuminput[$key],2)}} ({{number_format($discountrate,2)}}%)</td>
-								<td class="text-center">{{number_format($reportsuminput[$key])}}</td>
+								<td class="text-center check">{{number_format($sellinput,2)}}</td>
 								<td class="text-center">{{number_format($sellinput/1.07,2)}}</td>
 								<td class="text-center">{{number_format($vat,2)}}</td>
 								<td class="text-center">{{$gpcalculate}}</td>

@@ -241,6 +241,8 @@ class BrandController extends Controller
 			$product->shopeeItemId = $request->shopeeItemId;
 			$product->lazadaItemId = $request->lazadaItemId;
 			$product->lazadaModelId = $request->lazadaModelId;
+			$product->tiktokItemId = $request->tiktokItemId;
+			$product->tiktokmodelId = $request->tiktokmodelId;
 			$product->isShopeeSync = 1;
 			$product->save();
 
@@ -337,6 +339,8 @@ class BrandController extends Controller
 				$product->shopeeItemId = $request->shopeeItemId;
 				$product->lazadaItemId = $request->lazadaItemId;
 				$product->lazadaModelId = $request->lazadaModelId;
+				$product->tiktokItemId = $request->tiktokItemId;
+				$product->tiktokmodelId = $request->tiktokmodelId;
 				$product->isShopeeSync = 1;
 				$product->save();
 

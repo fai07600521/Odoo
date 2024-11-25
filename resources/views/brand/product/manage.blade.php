@@ -146,6 +146,19 @@
 											<input type="text" class="form-control" id="lazadaModelId" name="lazadaModelId" placeholder="lazadaModelId" value="{{isset($product) ? $product->lazadaModelId : ''}}">
 										</div>
 									</div>
+
+									<div class="form-group row">
+										<label class="col-12" for="tiktokItemId">Tiktok Item ID</label>
+										<div class="col-md-12">
+											<input type="text" class="form-control" id="tiktokItemId" name="tiktokItemId" placeholder="tiktokItemId" value="{{isset($product) ? $product->tiktokItemId : ''}}">
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-12" for="tiktokmodelId">Tiktok Model ID</label>
+										<div class="col-md-12">
+											<input type="text" class="form-control" id="tiktokmodelId" name="tiktokmodelId" placeholder="tiktokmodelId" value="{{isset($product) ? $product->tiktokmodelId : ''}}">
+										</div>
+									</div>
 									@if(isset($product))
 									<div class="form-group row">
 										<label class="col-12" for="product-tags">Tag</label>
