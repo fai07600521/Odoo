@@ -157,8 +157,10 @@
 										<tbody>
 											@foreach($purchase->getItem as $item)
 											<tr>
+												<input hidden="" class="products-input" value="{{$item->getProductVariant->id}}">
+												<input hidden="" class="quantity-input" value="{{$item->quantity}}">
 												<td>{{$item->getProductVariant->getProduct->name}} ({{$item->getProductVariant->variant}})</td>
-												<td class="text-center">{{$item->quantity}} {{$item->getProductVariant->getProduct->getUnit->name}}</td>
+												<td class="text-center">{{$item->quantity}}  {{$item->getProductVariant->getProduct->getUnit->name}}</td>
 											</tr>
 											@endforeach
 										</tbody>
@@ -169,10 +171,10 @@
 									@foreach($purchase->getItem as $key=> $item)
 									<div id="varintfield" class="form-group row">
 										<div id="nameitemk{{$key}}" class="col-8">
-											<input hidden="" name="products[]" value="{{$item->getProductVariant->id}}">
+											<input hidden="" class="products-input" name="products[]" value="{{$item->getProductVariant->id}}">
 											<input disabled="" value="{{$item->getProductVariant->getProduct->name}} ({{$item->getProductVariant->variant}}) ({{$item->getProductVariant->getProduct->price}} บาท)" class="form-control">
 										</div>
-										<div id="itemk{{$key}}" class="col-2"><input type="number" value="{{$item->quantity}}" name="quantity[]" required="" class="form-control"></div>
+										<div id="itemk{{$key}}" class="col-2"><input type="number" value="{{$item->quantity}}" name="quantity[]" required="" class="form-control quantity-input"></div>
 										<div id="btnitemk{{$key}}" class="col-2"><a href="javascript:delitem('k{{$key}}');" class="btn btn-danger"><i class="fa fa-trash"></i>ลบ</a><br></div>
 									</div>
 									@endforeach
@@ -205,6 +207,13 @@
 											@endif
 
 											<br><br>
+										</div>
+									</div>
+
+									<div class="row text-right">
+										<div class="col">
+											<button type="button" onclick="copyVariant()" class="btn btn-success">Copy VaraintId</button>
+											<button type="button" onclick="copyQuantities()" class="btn btn-info">Copy Quantities</button>
 										</div>
 									</div>
 
@@ -299,6 +308,67 @@
 				$("#btnitem"+id).remove();
 				$("#nameitem"+id).remove();
 			}
+
+			function copyVariant(){
+				const inputsproducts = document.querySelectorAll(".products-input");
+				const quantitiesproducts = Array.from(inputsproducts).map(function(input) {
+					return input.value;
+				});
+				const csvContent = quantitiesproducts.join("\n");
+				const textarea = document.createElement("textarea");
+				textarea.value = csvContent;
+				document.body.appendChild(textarea);
+				textarea.select();
+				try {
+					var successful = document.execCommand('copy');
+					if (successful) {
+						Swal.fire({
+							title: 'copy quantities success',
+							type: 'success',
+							timer: 1500,
+							showConfirmButton: false,
+						});
+					} else {
+						console.error('Failed to copy text to clipboard');
+					}
+				} catch (err) {
+					console.error('Error copying to clipboard: ', err);
+				}
+				document.body.removeChild(textarea);
+				navigator.clipboard.writeText(csvContent);
+			}
+			
+			function copyQuantities() {
+				const inputs = document.querySelectorAll(".quantity-input");
+				const quantities = Array.from(inputs).map(function(input) {
+					return input.value;
+				});
+				const csvContent = quantities.join("\n");
+				const textarea = document.createElement("textarea");
+				textarea.value = csvContent;
+				document.body.appendChild(textarea);
+				textarea.select();
+				try {
+					var successful = document.execCommand('copy');
+					if (successful) {
+						Swal.fire({
+							title: 'copy quantities success',
+							type: 'success',
+							timer: 1500,
+							showConfirmButton: false,
+						});
+					} else {
+						console.error('Failed to copy text to clipboard');
+					}
+				} catch (err) {
+					console.error('Error copying to clipboard: ', err);
+				}
+				document.body.removeChild(textarea);
+				navigator.clipboard.writeText(csvContent);
+
+			}
+
+
 			$('#product').select2({
 				placeholder: 'เลือกสินค้า',
 				ajax: {
