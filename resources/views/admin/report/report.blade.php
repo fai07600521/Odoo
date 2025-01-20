@@ -95,7 +95,7 @@
 								$gpcalculate = $gpcalculate*0.95;
 							}
 
-							if($branch->id == 17 || $branch->id == 18 ||  $branch->id == 19 || $branch->id == 20 || $branch->id == 21 || $branch->id == 22){
+							if($branch->id == 17 || $branch->id == 18 ||  $branch->id == 19 || $branch->id == 20 || $branch->id == 21 || $branch->id == 22 || $branch->id == 10 || $branch->id == 5 || $branch->id == 7){
 								$gpcalculate = $gp;
 							}
 
