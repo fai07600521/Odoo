@@ -1407,7 +1407,7 @@ class AdminController extends Controller
 		$branchs = Branch::all();
 		return view('admin.report.index',compact('branchs','brands'));
 	}
-	public function getReport(Request $request){
+	public function getReportOld(Request $request){
 		$startdate = $request->start_date;
 		$enddate = $request->end_date;
 		$branch_id = $request->branch_id;
@@ -1480,6 +1480,85 @@ class AdminController extends Controller
 		}
 
 
+	}
+
+	public function getReport(Request $request)
+	{
+		$startdate = $request->start_date;
+		$enddate = $request->end_date;
+		$branch_id = $request->branch_id;
+		$brand_id = $request->brand_id;
+	
+		if (!$startdate || !$enddate || !$branch_id) {
+			return redirect('/admin/report')->with('sysmessage', [
+				"msgcode" => "500",
+				"msg" => "เลือกวันที่เพื่อดูยอดขาย"
+			]);
+		}
+	
+		$branch = Branch::find($branch_id);
+		$brand = User::find($brand_id);
+	
+		// Get GP or default to 0
+		$gp = Branch_user::where('user_id', $brand_id)
+			->where('branch_id', $branch_id)
+			->value('gp') ?? 0;
+	
+		// Date range format
+		$startDateTime = "$startdate 00:00:00";
+		$endDateTime = "$enddate 23:59:59";
+	
+		// Aggregate invoices and related data using eager loading
+		$invoices = Invoices::with(['getItem', 'getPromotion'])
+			->whereBetween('created_at', [$startDateTime, $endDateTime])
+			->where('branch_id', $branch->id)
+			->where('status', '1')
+			->get();
+	
+		// Preload payment methods for efficiency
+		$pmethods = Paymenttypes::all();
+	
+		// Initialize variables
+		$reportsum = [];
+		$reportquantity = [];
+		$reportsuminput = [];
+		$reportrealprice = [];
+		$reportinvoiceid = [];
+		$sumdiscount = 0;
+		$discountpayment = array_fill_keys($pmethods->pluck('id')->toArray(), 0);
+	
+		foreach ($invoices as $invoice) {
+			foreach ($invoice->getItem as $item) {
+				$tmpprodid = "id{$item->product_id}|" . ($item->suminput / $item->quantity);
+				$reportsum[$tmpprodid] = ($reportsum[$tmpprodid] ?? 0) + $item->price * $item->quantity;
+				$reportquantity[$tmpprodid] = ($reportquantity[$tmpprodid] ?? 0) + $item->quantity;
+				$reportsuminput[$tmpprodid] = ($reportsuminput[$tmpprodid] ?? 0) + $item->suminput;
+				$reportrealprice[$tmpprodid] = $item->price;
+				$reportinvoiceid[$tmpprodid] = ($reportinvoiceid[$tmpprodid] ?? '') . ',' . $item->id;
+			}
+	
+			foreach ($invoice->getPromotion as $promo) {
+				$sumdiscount += $promo->discount;
+				$discountpayment[$invoice->paymenttype_id] += $promo->discount;
+			}
+		}
+	
+		// Aggregate payments directly using a raw query for efficiency
+		$payments = DB::table('invoices as i')
+			->join('invoice_item as it', 'i.id', '=', 'it.invoice_id')
+			->join('paymenttypes as pt', 'pt.id', '=', 'i.paymenttype_id')
+			->select('i.paymenttype_id as id', 'pt.name as name', DB::raw('SUM(it.suminput) as sum'))
+			->where('i.status', '1')
+			->whereBetween('i.created_at', [$startDateTime, $endDateTime])
+			->where('i.branch_id', $branch->id)
+			->groupBy('i.paymenttype_id')
+			->get();
+	
+		return view('admin.report.report', compact(
+			'reportsum', 'reportquantity', 'startdate', 'enddate', 'payments',
+			'branch', 'pmethods', 'sumdiscount', 'discountpayment',
+			'brand', 'reportsuminput', 'brand_id', 'gp', 'reportrealprice'
+		));
 	}
 
 	public function apiGetproduct(Request $request){
