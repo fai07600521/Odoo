@@ -895,7 +895,7 @@ class BrandController extends Controller
 		$branchs = Branch_user::where("user_id",'=',$user->id)->get();
 		return view('brand.report.index',compact('branchs'));
 	}
-	public function getReport(Request $request){
+	public function getReportOld(Request $request){
 		$startdate = $request->start_date;
 		$enddate = $request->end_date;
 		$branch_id = $request->branch_id;
@@ -971,6 +971,80 @@ class BrandController extends Controller
 
 
 	}
+
+	public function getReport(Request $request)
+	{
+		$startdate = $request->start_date;
+		$enddate = $request->end_date;
+		$branch_id = $request->branch_id;
+		$brand_id = $request->brand_id;
+		$user = Auth::user();
+	
+		if (!$startdate || !$enddate || !$branch_id) {
+			return redirect('/report')->with('sysmessage', [
+				"msgcode" => "500",
+				"msg" => "เลือกวันที่เพื่อดูยอดขาย"
+			]);
+		}
+	
+		$branch = Branch::find($branch_id);
+	
+		// Get GP value or default to 0
+		$gp = Branch_user::where('user_id', $user->id)
+			->where('branch_id', $branch_id)
+			->value('gp') ?? 0;
+	
+		// Format dates
+		$startDateTime = "$startdate 00:00:00";
+		$endDateTime = "$enddate 23:59:59";
+	
+		// Load invoices with related items and promotions
+		$invoices = Invoices::with(['getItem', 'getPromotion'])
+			->whereBetween('created_at', [$startDateTime, $endDateTime])
+			->where('branch_id', $branch->id)
+			->where('status', '1')
+			->get();
+	
+		// Preload payment methods
+		$pmethods = Paymenttypes::all();
+		$paymentMethodsIds = $pmethods->pluck('id')->toArray();
+	
+		// Initialize arrays with default values
+		$reportsum = [];
+		$reportquantity = [];
+		$reportsuminput = [];
+		$sumdiscount = 0;
+		$discountpayment = array_fill_keys($paymentMethodsIds, 0);
+		$paymentincome = array_fill_keys($paymentMethodsIds, 0);
+	
+		foreach ($invoices as $invoice) {
+			foreach ($invoice->getItem as $item) {
+				$tmpprodid = "id{$item->product_id}|" . ($item->suminput / $item->quantity);
+	
+				// Aggregate product-related data
+				$reportsum[$tmpprodid] = ($reportsum[$tmpprodid] ?? 0) + ($item->price * $item->quantity);
+				$reportquantity[$tmpprodid] = ($reportquantity[$tmpprodid] ?? 0) + $item->quantity;
+				$reportsuminput[$tmpprodid] = ($reportsuminput[$tmpprodid] ?? 0) + $item->suminput;
+	
+				// Aggregate payment income
+				$paymentincome[$invoice->paymenttype_id] += ($invoice->paymenttype_id == 9)
+					? ($item->price * $item->quantity)
+					: $item->suminput;
+			}
+	
+			foreach ($invoice->getPromotion as $promo) {
+				$sumdiscount += $promo->discount;
+				$discountpayment[$invoice->paymenttype_id] += $promo->discount;
+			}
+		}
+	
+		return view('brand.report.report', compact(
+			'reportsum', 'gp', 'reportquantity', 'startdate', 'enddate', 'branch',
+			'pmethods', 'sumdiscount', 'discountpayment', 'reportsuminput',
+			'paymentincome', 'user', 'brand_id'
+		));
+	}
+	
 //======================End Report Manage=========================
 	//======================Stock Report=========================
 	public function getStock(){
