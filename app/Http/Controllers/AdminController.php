@@ -958,54 +958,54 @@ class AdminController extends Controller
 	{
 		$user = User::find($request->user_id);
 		$users = User::where('status', '1')->where('role', '1')->get();
-		$branchs = Branch::all();
-		
+		$branches = Branch::pluck('id')->toArray(); // Fetch branch IDs directly for fast stock mapping
+	
 		if ($user) {
-			return view('admin.stock.report', compact('user', 'users', 'branchs'))->with('flag', 1);
+			return view('admin.stock.report', compact('user', 'users', 'branches'))->with('flag', 1);
 		}
 	
 		$flag = 2;
-		
-		// Fetch all products with variants and brand info in one query
-		$products = Products::where('status', '1')->with(['getVariant:id,product_id', 'getUser:id,brand_name'])->get();
-		
-		// Pre-map branches for stock initialization
-		$branchIds = $branchs->pluck('id')->toArray();
-		
-		// Prepare product variant stock structure efficiently
-		$results = $products->flatMap(function ($product) use ($branchIds) {
-			return $product->getVariant->mapWithKeys(function ($variant) use ($product, $branchIds) {
-				return [
-					$variant->id => [
-						'product_id'   => $variant->id,
-						'product_name' => $product->name,
-						'brand_name'   => optional($product->getUser)->brand_name ?? 'Unknown', // Handle missing brand
-						'price'        => $product->price,
-						'stock'        => array_fill_keys($branchIds, 0) // Initialize all branch stock as 0
-					]
-				];
-			});
-		});
 	
-		// Fetch latest stock data in one optimized query
+		// Fetch all products with variants and user brand name in ONE query
+		$products = Products::where('status', '1')
+			->with([
+				'getVariant:id,product_id',
+				'getUser:id,brand_name'
+			])
+			->get(['id', 'name', 'price', 'user_id']);
+	
+		// Preload product variants into results array with zeroed stocks
+		$results = [];
+		foreach ($products as $product) {
+			$brandName = optional($product->getUser)->brand_name ?? 'Unknown';
+			foreach ($product->getVariant as $variant) {
+				$results[$variant->id] = [
+					'product_id'   => $variant->id,
+					'product_name' => $product->name,
+					'brand_name'   => $brandName,
+					'price'        => $product->price,
+					'stock'        => array_fill_keys($branches, 0) // Pre-fill stock with 0
+				];
+			}
+		}
+	
+		// Fetch latest stock values in ONE optimized query using subquery
 		$stocks = DB::table('stocks as s')
 			->join('product_variant as pv', 'pv.id', '=', 's.product_id')
-			->join('products as p', 'pv.product_id', '=', 'p.id')
-			->join('branch as b', 'b.id', '=', 's.branch_id')
-			->join('users as u', 'u.id', '=', 'p.user_id')
+			->select('pv.id as product_id', 's.branch_id', 's.sum as remain')
 			->whereRaw('s.id = (SELECT MAX(id) FROM stocks WHERE product_id = s.product_id AND branch_id = s.branch_id)')
-			->select('pv.id as product_id', 'b.id as branch_id', 's.sum as remain')
 			->get();
 	
-		// Update stock values efficiently using key mapping
+		// Directly update stock values in the results array
 		foreach ($stocks as $stock) {
 			if (isset($results[$stock->product_id])) {
 				$results[$stock->product_id]['stock'][$stock->branch_id] = $stock->remain;
 			}
 		}
 	
-		return view('admin.stock.report', compact('user', 'users', 'flag', 'branchs', 'results'));
+		return view('admin.stock.report', compact('user', 'users', 'flag', 'branches', 'results'));
 	}
+	
 	
 
 	public static function getOnhand($product_id){
