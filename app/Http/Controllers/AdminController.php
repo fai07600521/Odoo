@@ -913,7 +913,7 @@ class AdminController extends Controller
 		$flag = 0;
 		return view('admin.stock.report',compact('users','flag'));
 	}
-	public function getStockBrand(Request $request){
+	public function getStockBrandOld(Request $request){
 		$user = User::find($request->user_id);
 		$users = User::where("status",'=','1')->where("role",'=',"1")->get();
 		$branchs = Branch::all();
@@ -954,6 +954,61 @@ class AdminController extends Controller
 
 		
 	}
+	public function getStockBrand(Request $request)
+	{
+		$user = User::find($request->user_id);
+		$users = User::where("status", "1")->where("role", "1")->get();
+		$branchs = Branch::all();
+
+		if ($user) {
+			return view('admin.stock.report', [
+				'user' => $user,
+				'users' => $users,
+				'flag' => 1,
+				'branchs' => $branchs
+			]);
+		}
+
+		$flag = 2;
+		$results = [];
+
+		// Fetch products with variants and brand relationship in one query
+		$products = Products::where('status', '1')->with(['getVariant', 'getUser'])->get();
+
+		// Initialize stock data for each product variant
+		foreach ($products as $product) {
+			foreach ($product->getVariant as $variant) {
+				$results[$variant->id] = [
+					"product_id"   => $variant->id,
+					"product_name" => $product->name,
+					"brand_name"   => optional($product->getUser)->brand_name, // Handle missing brand
+					"price"        => $product->price,
+					"stock"        => array_fill_keys($branchs->pluck('id')->toArray(), 0) // Fill all branches with 0 stock
+				];
+			}
+		}
+
+		// Optimize stock query
+		$stocks = DB::table('stocks as s')
+			->join('product_variant as pv', 'pv.id', '=', 's.product_id')
+			->join('products as p', 'pv.product_id', '=', 'p.id')
+			->join('branch as b', 'b.id', '=', 's.branch_id')
+			->join('users as u', 'u.id', '=', 'p.user_id')
+			->whereRaw('s.id IN (SELECT MAX(id) FROM stocks GROUP BY product_id, branch_id)')
+			->select('pv.id as product_id', 'b.id as branch_id', 's.sum as remain')
+			->orderBy('pv.id', 'ASC')
+			->get();
+
+		// Populate stock data
+		foreach ($stocks as $stock) {
+			if (isset($results[$stock->product_id])) {
+				$results[$stock->product_id]["stock"][$stock->branch_id] = $stock->remain;
+			}
+		}
+
+		return view('admin.stock.report', compact('user', 'users', 'flag', 'branchs', 'results'));
+	}
+
 	public static function getOnhand($product_id){
 		$result = array();
 		$branchs = Branch::all();
