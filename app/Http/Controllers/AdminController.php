@@ -913,7 +913,7 @@ class AdminController extends Controller
 		$flag = 0;
 		return view('admin.stock.report',compact('users','flag'));
 	}
-	public function getStockBrandOld(Request $request){
+	public function getStockBrand(Request $request){
 		$user = User::find($request->user_id);
 		$users = User::where("status",'=','1')->where("role",'=',"1")->get();
 		$branchs = Branch::all();
@@ -954,7 +954,7 @@ class AdminController extends Controller
 
 		
 	}
-	public function getStockBrand(Request $request)
+	public function getStockBrandNew(Request $request)
 	{
 		$user = User::find($request->user_id);
 		$users = User::where('status', '1')->where('role', '1')->get();
