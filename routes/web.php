@@ -209,6 +209,7 @@ Route::get('/admin/promonotification/create','AdminController@getAddPromoNotific
 Route::post('/admin/promonotification/create','AdminController@addPromoNotification');
 Route::post('/admin/promonotification/update','AdminController@updatePromoNotification');
 Route::post('/admin/promonotification/addproduct','AdminController@addProducttoPromotion');
+Route::post('/admin/promonotification/addproducts','PromotionController@addProductstoPromotion')->name('promotion.auto');
 Route::get('/admin/promonotification/get/{id}','AdminController@getPromoNotification');
 Route::get('/admin/promonotification/delete/{promotion_id}/{product_id}','AdminController@removeProductfromPromotion');
 Route::get('/admin/promonotification/deletepromotion/{id}','AdminController@removePromotionNotification');

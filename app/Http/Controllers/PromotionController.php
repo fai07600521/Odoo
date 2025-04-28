@@ -11,6 +11,8 @@ use App\Promotion_auto;
 use App\Promotionauto_product;
 use App\Auto_branch;
 use App\Promotions;
+use App\Promotion_notification;
+use App\Promotion_product;
 use App\User;
 use Auth;
 use Validator;
@@ -313,6 +315,40 @@ class PromotionController extends Controller
 				"msg" => "ไม่พบรายการที่จะแก้ไข"
 			);
 			return redirect('/admin/promotions')->with('sysmessage',$sysmessage);
+		}
+	}
+
+	public function addProductstoPromotion(Request $request){
+		$promotion = Promotion_notification::find($request->id);
+
+		if(isset($promotion)){
+			if($request->type=="product"){
+				$products = $request->products;
+				if($products==null){
+					return response()->json([
+						'stauts' => 0
+					]);
+				}else{
+					for($i=0;$i<sizeOf($products);$i++){
+						$variant = Product_variant::find($products[$i]);
+			
+						if(isset($variant)){
+							$promoproduct = new Promotion_product;
+							$promoproduct->promotion_id = $promotion->id;
+							$promoproduct->product_id = $variant->id;
+							$promoproduct->save();
+						}
+					}
+				}
+
+			}
+			return response()->json([
+				'stauts' => 1 // Data to display
+			]);
+		}else{
+			return response()->json([
+				'stauts' => 0
+			]);
 		}
 	}
 

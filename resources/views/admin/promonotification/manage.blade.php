@@ -85,7 +85,8 @@
 			<div class="block-content">
 				<form method="POST" action="/admin/promonotification/addproduct">
 					{{csrf_field()}}
-					<input hidden="" value="{{$promotion->id}}" name="id">
+					<input hidden="" value="{{$promotion->id}}"  id="id" name="id">
+					<input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
 					<div class="form-group row productbox">
 						<label class="col-12">เลือกรูปแบบการส่งผลโปรโมชั่น</label>
 						<div class="col-12">
@@ -118,7 +119,12 @@
 							<button type="submit" class="btn btn-success">เพิ่ม</button>
 						</div>
 					</div>
-
+					<div class="form-group row">
+						<input type="text" class="form-control col-9" id="productsAdd" name="productsAdd" placeholder="กรอกรายละเอียด">
+						<div class="col-3 text-right">
+						  <button class="btn btn-primary" id="saveBtn" onclick="saveDescription(event)">add products</button>
+						</div>
+					</div>
 				</form>
 
 				<div class="row">
@@ -187,7 +193,39 @@
 					};
 				},
 			}
-		});	
+		});
+		function saveDescription(event) {
+			event.preventDefault();
+			const description = $('#productsAdd').val();
+			const id = $('#id').val();
+			if(!id){
+				alert('ID Not found');
+			}
+			const productNames = description.split(' ').map(item => item.trim()).filter(item => item !== '');
+			console.log(productNames);
+			$.ajax({
+				dataType: 'json',
+				type: "POST",
+				data: {
+					products:productNames,
+					id:id,
+					type:"product",
+					"_token": $('#token').val()
+				},
+				url: "{{ route('promotion.auto') }}",
+				dataType: 'json',
+				success: function(data){
+					location.reload();
+				}
+				error: function(xhr) {
+					console.error('Error:', xhr.responseText);
+					alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+				}
+			});
+		}
+
+
+
 	</script>
 	<script>jQuery(function(){ Codebase.helpers(['datepicker']); });</script>
 	@endsection
