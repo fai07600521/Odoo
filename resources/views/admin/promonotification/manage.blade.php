@@ -216,7 +216,7 @@
 				dataType: 'json',
 				success: function(data){
 					location.reload();
-				}
+				},
 				error: function(xhr) {
 					console.error('Error:', xhr.responseText);
 					alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
