@@ -194,7 +194,6 @@
 				},
 			}
 		});
-		/*
 		function saveDescription(event) {
 			event.preventDefault();
 			const description = $('#productsAdd').val();
@@ -224,7 +223,6 @@
 				}
 			});
 		}
-*/
 
 
 	</script>
