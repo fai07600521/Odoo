@@ -130,7 +130,7 @@
 												<p class="font-w600">
 
 													<b>ชื่อสินค้า: </b>{{$product->name}}<br> <b>คุณลักษณะ: </b>{{$variant->variant}}<br>
-													<b>แบรนด์: </b>{{$brand->brand_name}}<br>
+													<b>แบรนด์: </b>{{ $brand ? $brand->brand_name : 'ไม่พบแบรนด์' }}<br>
 													<font style="{{$promotionchk==1?'color:green;':''}}">
 														<b>ราคา: </b><br>{{number_format($price,2)}} บาท</font><br>
 													</p>
